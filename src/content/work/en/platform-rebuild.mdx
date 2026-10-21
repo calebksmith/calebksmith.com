@@ -1,0 +1,72 @@
+---
+title: Web portal rebuild: Migrating every page to one codebase
+role: Frontend, platform migration
+year: 2026
+stack: [Web portal, Next.js, Tailwind CSS, VimUI]
+summary: Every page rebuilt on VimUI, with Claude Code reading the legacy logic page by page, and no migration dip.
+user: A web portal that works on mobile, with a searchable library and no disruption on the way.
+business: One codebase instead of two, so an improvement reaches the whole web portal.
+connects: [vimui, guardrails, playlists]
+area: platform
+medal: layers
+order: 3
+impact: No migration dip
+---
+
+## Problem
+
+New features were built in a new monorepo, but the web portal still sat on the
+old one. The two looked like different products, and every improvement to the
+web portal waited on a migration nobody had time for. Our goal was one
+codebase, without disrupting the people who use the web portal every day.
+
+> **Design challenge:** migrating every page without a dip in use. We matched
+> the old behavior first, with the same data on a new foundation. The
+> exceptions were pages where porting a problem forward would waste the
+> migration, so the content library became a searchable explore page, and the
+> homepage and settings were modernized.
+
+<GatedFigure
+  src="platform-rebuild/content-library-desktop.webp"
+  dark="platform-rebuild/content-library-desktop-dark.webp"
+  width={2560}
+  height={1600}
+  alt="The Vimocity content library: a search bar for videos, documents, and collections above topic cards, starting with Getting Started and Individual Moves."
+  phone={{
+    src: "platform-rebuild/content-library-phone.webp",
+    dark: "platform-rebuild/content-library-phone-dark.webp",
+    width: 750,
+    height: 1624,
+    alt: "The same content library on a phone: the search bar first, then topic cards one per row.",
+  }}
+  caption="The content library, one of the pages redesigned rather than ported: search first, then browse by topic, on a desktop and a phone from the same code."
+/>
+
+## What I did
+
+- **Had Claude Code map the old web portal, page by page.** It traced the
+  logic, API calls, and database links each page depended on, which is most of
+  the work in a migration.
+- **Rebuilt each page from VimUI.** Pages run against the same APIs and are held
+  to the [guardrails](/work/guardrails) automatically. The rules I’d written
+  for people turned out to make the agent’s output reviewable too.
+
+<Figure
+  caption="The loop, run once for every page: read the old page, rebuild it, check it, and hand it to engineering before moving on."
+>
+  <PageByPage />
+</Figure>
+
+## Outcome
+
+<Stats>
+  <Stat value="74% → 75%" label="week-1 return, with weekly web users holding steady" />
+  <Stat value="+4–7 pts" label="web video engagement, year over year, after the content library redesign" />
+</Stats>
+
+Every page is live on one codebase. The web portal now works on mobile, and a
+product manager or engineer can change a page without a designer in the loop.
+
+**Who did what:** I rebuilt every page from VimUI, with Claude Code reading the
+legacy code. Engineering reviewed and hardened each section before it shipped,
+which is where an agent’s misreadings get caught.

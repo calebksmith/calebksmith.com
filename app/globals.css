@@ -1,0 +1,882 @@
+@import "tailwindcss";
+
+/* `access:` — styles for a browser that opened a personal access link. The
+   theme script stamps data-access="granted" on <html> before first paint, so a
+   gated figure can show its image or its note without a flash or a shift. The
+   attribute grants nothing: the image route checks the token itself. */
+@custom-variant access (&:where([data-access="granted"] *));
+
+/* ===========================================================================
+   Token layer
+   ===========================================================================
+   Colors are not a flat palette. Every surface has a paired foreground, so a
+   component written as `bg-card text-card-foreground` is legible in every
+   theme without anyone remembering which text color goes where. Adding a theme
+   means redefining these pairs — nothing else.
+
+   Two independent axes, both on <html>:
+     data-theme  default (absent) | ember | contrast
+     data-mode   system (absent)  | light | dark
+
+   Every pair in every theme/mode combination is verified by
+   `npm run check:contrast`. The high-contrast theme is held to AAA.
+   Do not edit a value here without re-running it.
+=========================================================================== */
+
+/* --- default · light (the baseline) --------------------------------------- */
+
+:root {
+  --ck-background: #eef0f2;
+  --ck-foreground: #14161b;
+  --ck-card: #f9fafb;
+  --ck-card-foreground: #14161b;
+  --ck-muted: #dde1e6;
+  --ck-muted-foreground: #4c535c;
+  --ck-primary: #4a2ce0;
+  --ck-primary-hover: #3d21c4;
+  --ck-accent-hover: #d7d0fb;
+  --ck-primary-foreground: #ffffff;
+  --ck-accent: #e5e0fd;
+  --ck-accent-foreground: #2c1a8c;
+  --ck-mark-ground: #14161b;
+  --ck-mark-ink: #a78bfa;
+  --ck-positive: #d9f0e1;
+  --ck-positive-foreground: #0d5129;
+  --ck-destructive: #fbe1e1;
+  --ck-destructive-foreground: #8a1c1c;
+  --ck-gradient-from: #4a2ce0;
+  --ck-gradient-to: #c026a8;
+
+  /* Decorative hairline. Not held to 3:1 — WCAG 1.4.11 governs control
+     boundaries, not rules between rows. That is what --ck-input is for. */
+  --ck-border: #c9ced4;
+  /* Control boundary. Held to 3:1 against the background. */
+  --ck-input: #6f767e;
+  --ck-ring: #4a2ce0;
+
+  /* --- Non-color tokens. Theme-independent. --- */
+  --ck-shadow-lift: 0 6px 20px -6px rgb(0 0 0 / 0.18);
+
+  --ck-radius-sm: 2px;
+  --ck-radius-md: 4px;
+  --ck-radius-lg: 8px;
+  /* Device frames around screenshots. Nested corners follow one rule: the
+     inner radius is the outer radius less the space between them (the bezel
+     and the frame's 1px border), so the two curves stay concentric.
+
+     The monitor starts from its body and works in: the screenshot's corner is
+     what's left. The phone starts from its screen and works out, because the
+     bezel is too thin to leave a usable inner curve from a rounder body. */
+  --ck-device-bezel: 8px;
+  --ck-radius-monitor: 12px;
+  --ck-radius-monitor-screen: calc(
+    var(--ck-radius-monitor) - var(--ck-device-bezel) - 1px
+  );
+  --ck-radius-phone-screen: 14px;
+  --ck-radius-phone: calc(
+    var(--ck-radius-phone-screen) + var(--ck-device-bezel) + 1px
+  );
+
+  /* Hover and press feedback. Fast enough not to lag the pointer, slow enough
+     to read as a fade rather than a switch. Every interactive surface uses it. */
+  --ck-duration-fast: 120ms;
+  --ck-duration-base: 320ms;
+  --ck-duration-slow: 640ms;
+  --ck-ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+
+  /* The uppercase label — the most-repeated text style on the site. It lived as
+     ten hand-typed variants across 33 call sites until these existed. */
+  --ck-label-size: 0.75rem;
+  --ck-label-size-sm: 0.6875rem;
+  --ck-label-tracking: 0.14em;
+
+  /* Minimum touch target. Non-negotiable; see CLAUDE.md. */
+  --ck-tap: 44px;
+
+  /* The site header's height, derived rather than measured: its content is a
+     single row of tap-sized controls, plus its bottom rule. Anything that has
+     to sit flush beneath the header reads this instead of hardcoding a value
+     that silently drifts when the header changes. */
+  --ck-header-height: calc(var(--ck-tap) + 1px);
+
+  /* Width of the docked inspector. Read by the panel itself, by the body
+     padding that gives the page its width back, and by the appearance popover
+     that has to clear it — one value, three consumers, no drift. */
+  --ck-inspector-width: 21rem;
+
+  /* Line length. `measure` is the reading width for body prose; `measure-wide`
+     is for pages whose content is scanned rather than read straight through —
+     case study bodies, style guide descriptions — where a column half the
+     window's width reads as an unfinished layout rather than as care. */
+  --ck-measure: 62ch;
+  --ck-measure-wide: 75ch;
+
+  /* The page container. It centres in the window on wide screens, and the
+     header row sits in the same container, so the logo, every heading, and
+     every figure share one left edge at any window width. Content inside it
+     stays left-aligned; pinning the container to the window's left edge was
+     tried and left a wide empty band on the right of large screens.
+
+     72rem holds a six-column bento at a sensible card size and leaves prose at
+     roughly two thirds of it, which is the relationship a page wants: headings
+     span the container, sentences do not. */
+  --ck-container: 72rem;
+}
+
+/* --- default · dark ------------------------------------------------------- */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode="light"]) {
+    --ck-background: #0e1013;
+    --ck-shadow-lift: 0 10px 28px -8px rgb(0 0 0 / 0.55);
+    --ck-foreground: #e9ebee;
+    --ck-card: #171a1f;
+    --ck-card-foreground: #e9ebee;
+    --ck-muted: #232830;
+    --ck-muted-foreground: #9aa2ac;
+    --ck-primary: #a78bfa;
+    --ck-primary-hover: #b9a3fb;
+    --ck-accent-hover: #2e2456;
+    --ck-primary-foreground: #14161b;
+    --ck-accent: #241c46;
+    --ck-accent-foreground: #c9b8fd;
+    --ck-mark-ground: #a78bfa;
+    --ck-mark-ink: #14161b;
+    --ck-positive: #12291c;
+    --ck-positive-foreground: #7fd9a3;
+    --ck-destructive: #2e1517;
+    --ck-destructive-foreground: #f2a1a1;
+    --ck-gradient-from: #a78bfa;
+    --ck-gradient-to: #f2a8e4;
+    --ck-border: #2a3038;
+    --ck-input: #6b737d;
+    --ck-ring: #a78bfa;
+  }
+}
+
+:root[data-mode="dark"] {
+  --ck-background: #0e1013;
+  --ck-shadow-lift: 0 10px 28px -8px rgb(0 0 0 / 0.55);
+  --ck-foreground: #e9ebee;
+  --ck-card: #171a1f;
+  --ck-card-foreground: #e9ebee;
+  --ck-muted: #232830;
+  --ck-muted-foreground: #9aa2ac;
+  --ck-primary: #a78bfa;
+  --ck-primary-hover: #b9a3fb;
+  --ck-accent-hover: #2e2456;
+  --ck-primary-foreground: #14161b;
+  --ck-accent: #241c46;
+  --ck-accent-foreground: #c9b8fd;
+  --ck-mark-ground: #a78bfa;
+  --ck-mark-ink: #14161b;
+  --ck-positive: #12291c;
+  --ck-positive-foreground: #7fd9a3;
+  --ck-destructive: #2e1517;
+  --ck-destructive-foreground: #f2a1a1;
+  --ck-gradient-from: #a78bfa;
+  --ck-gradient-to: #f2a8e4;
+  --ck-border: #2a3038;
+  --ck-input: #6b737d;
+  --ck-ring: #a78bfa;
+}
+
+/* --- ember · light -------------------------------------------------------- */
+
+:root[data-theme="ember"] {
+  --ck-background: #f1efee;
+  --ck-foreground: #1a1614;
+  --ck-card: #fbfaf9;
+  --ck-card-foreground: #1a1614;
+  --ck-muted: #e3dedb;
+  --ck-muted-foreground: #57504b;
+  --ck-primary: #b03a10;
+  --ck-primary-hover: #93300d;
+  --ck-accent-hover: #f7d4c4;
+  --ck-primary-foreground: #ffffff;
+  --ck-accent: #fbe3d8;
+  --ck-accent-foreground: #7a2708;
+  --ck-mark-ground: #14161b;
+  --ck-mark-ink: #f08a5d;
+  --ck-positive: #dcefdf;
+  --ck-positive-foreground: #14512a;
+  --ck-destructive: #fbe0da;
+  --ck-destructive-foreground: #8f2415;
+  --ck-gradient-from: #b03a10;
+  --ck-gradient-to: #d98014;
+  --ck-border: #d5cec9;
+  --ck-input: #78716c;
+  --ck-ring: #b03a10;
+}
+
+/* --- ember · dark --------------------------------------------------------- */
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="ember"]:not([data-mode="light"]) {
+    --ck-background: #12100f;
+    --ck-shadow-lift: 0 10px 28px -8px rgb(0 0 0 / 0.55);
+    --ck-foreground: #ece8e6;
+    --ck-card: #1c1917;
+    --ck-card-foreground: #ece8e6;
+    --ck-muted: #292421;
+    --ck-muted-foreground: #a89f99;
+    --ck-primary: #f08a5d;
+    --ck-primary-hover: #f39c75;
+    --ck-accent-hover: #48281a;
+    --ck-primary-foreground: #1a1614;
+    --ck-accent: #3a1f12;
+    --ck-accent-foreground: #f6b393;
+    --ck-mark-ground: #f08a5d;
+    --ck-mark-ink: #14161b;
+    --ck-positive: #17291b;
+    --ck-positive-foreground: #8fd49b;
+    --ck-destructive: #331814;
+    --ck-destructive-foreground: #f3ac9c;
+    --ck-gradient-from: #f08a5d;
+    --ck-gradient-to: #f5c46b;
+    --ck-border: #332c28;
+    --ck-input: #7a726c;
+    --ck-ring: #f08a5d;
+  }
+}
+
+:root[data-theme="ember"][data-mode="dark"] {
+  --ck-background: #12100f;
+  --ck-shadow-lift: 0 10px 28px -8px rgb(0 0 0 / 0.55);
+  --ck-foreground: #ece8e6;
+  --ck-card: #1c1917;
+  --ck-card-foreground: #ece8e6;
+  --ck-muted: #292421;
+  --ck-muted-foreground: #a89f99;
+  --ck-primary: #f08a5d;
+  --ck-primary-hover: #f39c75;
+  --ck-accent-hover: #48281a;
+  --ck-primary-foreground: #1a1614;
+  --ck-accent: #3a1f12;
+  --ck-accent-foreground: #f6b393;
+  --ck-mark-ground: #f08a5d;
+  --ck-mark-ink: #14161b;
+  --ck-positive: #17291b;
+  --ck-positive-foreground: #8fd49b;
+  --ck-destructive: #331814;
+  --ck-destructive-foreground: #f3ac9c;
+  --ck-gradient-from: #f08a5d;
+  --ck-gradient-to: #f5c46b;
+  --ck-border: #332c28;
+  --ck-input: #7a726c;
+  --ck-ring: #f08a5d;
+}
+
+/* --- contrast · light (AAA on every text pair) ---------------------------- */
+
+:root[data-theme="contrast"] {
+  --ck-background: #ffffff;
+  --ck-foreground: #000000;
+  --ck-card: #fbfbfc;
+  --ck-card-foreground: #000000;
+  --ck-muted: #ebebeb;
+  --ck-muted-foreground: #1a1a1a;
+  --ck-primary: #00006b;
+  --ck-primary-hover: #00004d;
+  --ck-accent-hover: #dedef0;
+  --ck-primary-foreground: #ffffff;
+  --ck-accent: #ececf7;
+  --ck-accent-foreground: #00006b;
+  --ck-mark-ground: #000000;
+  --ck-mark-ink: #ffffff;
+  --ck-positive: #e6f4ea;
+  --ck-positive-foreground: #00380f;
+  --ck-destructive: #fdeaea;
+  --ck-destructive-foreground: #660000;
+  --ck-gradient-from: #00006b;
+  --ck-gradient-to: #00006b;
+  /* In high contrast the hairline stops being decorative and carries
+     structure, so it matches the control boundary. */
+  --ck-border: #000000;
+  --ck-input: #000000;
+  --ck-ring: #00006b;
+}
+
+/* --- contrast · dark ------------------------------------------------------ */
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="contrast"]:not([data-mode="light"]) {
+    --ck-background: #000000;
+    --ck-shadow-lift: 0 10px 28px -8px rgb(0 0 0 / 0.55);
+    --ck-foreground: #ffffff;
+    --ck-card: #0a0a0c;
+    --ck-card-foreground: #ffffff;
+    --ck-muted: #141414;
+    --ck-muted-foreground: #ededed;
+    --ck-primary: #eaeaff;
+    --ck-primary-hover: #ffffff;
+    --ck-accent-hover: #1c1c2c;
+    --ck-primary-foreground: #000000;
+    --ck-accent: #12121c;
+    --ck-accent-foreground: #eaeaff;
+    --ck-mark-ground: #ffffff;
+    --ck-mark-ink: #000000;
+    --ck-positive: #0a1a0e;
+    --ck-positive-foreground: #baf5c9;
+    --ck-destructive: #1a0a0a;
+    --ck-destructive-foreground: #ffc9c9;
+    --ck-gradient-from: #eaeaff;
+    --ck-gradient-to: #eaeaff;
+    --ck-border: #ffffff;
+    --ck-input: #ffffff;
+    --ck-ring: #eaeaff;
+  }
+}
+
+:root[data-theme="contrast"][data-mode="dark"] {
+  --ck-background: #000000;
+  --ck-shadow-lift: 0 10px 28px -8px rgb(0 0 0 / 0.55);
+  --ck-foreground: #ffffff;
+  --ck-card: #0a0a0c;
+  --ck-card-foreground: #ffffff;
+  --ck-muted: #141414;
+  --ck-muted-foreground: #ededed;
+  --ck-primary: #eaeaff;
+  --ck-primary-hover: #ffffff;
+  --ck-accent-hover: #1c1c2c;
+  --ck-primary-foreground: #000000;
+  --ck-accent: #12121c;
+  --ck-accent-foreground: #eaeaff;
+  --ck-mark-ground: #ffffff;
+  --ck-mark-ink: #000000;
+  --ck-positive: #0a1a0e;
+  --ck-positive-foreground: #baf5c9;
+  --ck-destructive: #1a0a0a;
+  --ck-destructive-foreground: #ffc9c9;
+  --ck-gradient-from: #eaeaff;
+  --ck-gradient-to: #eaeaff;
+  --ck-border: #ffffff;
+  --ck-input: #ffffff;
+  --ck-ring: #eaeaff;
+}
+
+/* ===========================================================================
+   Tailwind bridge
+   ===========================================================================
+   Exposes the tokens as utilities. Add a token above, expose it here, use the
+   utility in a component. A component never sees a hex value.
+=========================================================================== */
+
+@theme inline {
+  --color-background: var(--ck-background);
+  --color-foreground: var(--ck-foreground);
+  --color-card: var(--ck-card);
+  --color-card-foreground: var(--ck-card-foreground);
+  --color-muted: var(--ck-muted);
+  --color-muted-foreground: var(--ck-muted-foreground);
+  --color-primary: var(--ck-primary);
+  --color-primary-foreground: var(--ck-primary-foreground);
+  --color-accent: var(--ck-accent);
+  --color-accent-foreground: var(--ck-accent-foreground);
+  /* One step further from the page ground, for hover on a filled surface.
+     `hover:opacity-90` was the old answer and it was two bugs: opacity is not
+     in `transition-colors`, so it snapped, and fading a button fades its label
+     with it — dropping the very contrast the pairs exist to guarantee. */
+  --color-mark-ground: var(--ck-mark-ground);
+  --color-mark-ink: var(--ck-mark-ink);
+  --color-primary-hover: var(--ck-primary-hover);
+  --color-accent-hover: var(--ck-accent-hover);
+  --color-positive: var(--ck-positive);
+  --color-positive-foreground: var(--ck-positive-foreground);
+  --color-destructive: var(--ck-destructive);
+  --color-destructive-foreground: var(--ck-destructive-foreground);
+  --color-border: var(--ck-border);
+  --color-input: var(--ck-input);
+  --color-ring: var(--ck-ring);
+
+  --shadow-lift: var(--ck-shadow-lift);
+
+  --radius-sm: var(--ck-radius-sm);
+  --radius-md: var(--ck-radius-md);
+  --radius-lg: var(--ck-radius-lg);
+  --radius-monitor: var(--ck-radius-monitor);
+  --radius-monitor-screen: var(--ck-radius-monitor-screen);
+  --radius-phone: var(--ck-radius-phone);
+  --radius-phone-screen: var(--ck-radius-phone-screen);
+
+  /* Type. The label sizes and tracking exist so the site's most-repeated text
+     style has one definition rather than ten. Tailwind's `--text-*` and
+     `--tracking-*` namespaces generate real utilities — `text-label`,
+     `tracking-label` — unlike the spacing scale, which is a single multiplier
+     and needs @utility. */
+  --text-label: var(--ck-label-size);
+  --text-label-sm: var(--ck-label-size-sm);
+  --tracking-label: var(--ck-label-tracking);
+
+  /* Line length, as `max-w-measure` and `max-w-measure-wide`. The token existed
+     for a year and nothing read it; every call site typed `62ch` instead,
+     because there was no utility to reach for. */
+  --container-measure: var(--ck-measure);
+  --container-measure-wide: var(--ck-measure-wide);
+  --container-page: var(--ck-container);
+
+  /* Motion defaults, not utilities. Tailwind has no `--duration-*` namespace —
+     `duration-150` is a literal — but it does take a default, so setting these
+     two means a bare `transition-colors` picks up the site's timing and easing
+     with nothing at the call site. That is what makes every hover on the site
+     fade at the same rate: one declaration, not a class repeated forty times. */
+  --default-transition-duration: var(--ck-duration-fast);
+  --default-transition-timing-function: var(--ck-ease);
+
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", monospace;
+  --font-sans: var(--font-plex-mono), ui-monospace, "SF Mono", monospace;
+}
+
+/* ===========================================================================
+   Utilities
+   ===========================================================================
+   The 44px minimum touch target, as a named utility.
+
+   Declared with @utility rather than as a `--spacing-*` theme key: Tailwind v4's
+   spacing scale is a single multiplier (`--spacing: .25rem`), not a named map,
+   so a `--spacing-tap` entry silently generates nothing. Silently is the problem
+   — a floor that doesn't apply is worse than no floor.
+=========================================================================== */
+
+/* The UA stylesheet centres [popover] with `inset: 0; margin: auto`. Anchor the
+   header's panels under the bar instead. Overriding requires real CSS — a
+   utility class loses to the UA rule's specificity on the popover element.
+
+   CSS anchor positioning would be the right tool and would let these follow
+   their triggers exactly, but browser support is still uneven, so these are
+   pinned to the header's edges. Revisit when anchor positioning is safe. */
+[data-slot="settings-panel"],
+[data-slot="work-menu-panel"] {
+  position: fixed;
+  margin: 0;
+  top: 3.75rem;
+  /* A fixed panel taller than the window can't be scrolled into view, so on a
+     short window it scrolls inside instead. The 1rem below matches its inset
+     from the side. */
+  max-height: calc(100dvh - 4.75rem);
+  overflow-y: auto;
+}
+
+[data-slot="settings-panel"] {
+  right: 1rem;
+  left: auto;
+}
+
+[data-slot="work-menu-panel"] {
+  left: 1rem;
+  right: auto;
+}
+
+[data-slot="settings-panel"]::backdrop,
+[data-slot="work-menu-panel"]::backdrop {
+  background: transparent;
+}
+
+/* The inspector is a layout column on the left (see
+   components/cksui/inspector.tsx), so nothing here has to move the page out
+   from under it, and the appearance popover on the right no longer collides
+   with it. Both rules that used to live here are gone. */
+
+@utility h-tap {
+  height: var(--ck-tap);
+}
+
+@utility min-h-tap {
+  min-height: var(--ck-tap);
+}
+
+@utility min-w-tap {
+  min-width: var(--ck-tap);
+}
+
+@utility size-tap {
+  min-width: var(--ck-tap);
+  min-height: var(--ck-tap);
+}
+
+/* ===========================================================================
+   Base
+=========================================================================== */
+
+html {
+  /* The browser paints its own ground behind the document; be explicit. */
+  background-color: var(--ck-background);
+  color-scheme: light dark;
+}
+
+/* Anything that responds to a click says so.
+ *
+ * A rule rather than forty call sites. `<button>` defaults to `cursor: default`
+ * in every browser — links get a pointer for free and buttons do not, which is
+ * why this is the control people forget. Labels are here because the radio
+ * groups in the playground and the theme switcher hide the input and put the
+ * whole hit area on the label.
+ *
+ * Disabled controls are excluded: a pointer on something that will not respond
+ * is a promise the interface cannot keep. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label:has(input[type="radio"]:not(:disabled)),
+label:has(input[type="checkbox"]:not(:disabled)),
+summary {
+  cursor: pointer;
+}
+
+:root[data-mode="light"] {
+  color-scheme: light;
+}
+
+:root[data-mode="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--ck-background);
+  color: var(--ck-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible focus is non-negotiable. Never set outline:none without an equally
+   visible replacement. --ck-ring clears 3:1 against the background in every
+   theme; the offset keeps it legible on top of a filled control. */
+:focus-visible {
+  outline: 2px solid var(--ck-ring);
+  outline-offset: 2px;
+  border-radius: var(--ck-radius-sm);
+}
+
+::selection {
+  background-color: var(--ck-primary);
+  color: var(--ck-primary-foreground);
+}
+
+/* ===========================================================================
+   Motion
+   ===========================================================================
+   Entrance animations are opt-in via .ck-enter, staggered with --ck-enter-index.
+   Everything collapses to a no-op under prefers-reduced-motion — content must
+   never depend on an animation to become visible.
+=========================================================================== */
+
+@keyframes ck-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ck-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
+
+.ck-enter {
+  opacity: 0;
+  animation: ck-rise var(--ck-duration-slow) var(--ck-ease) forwards;
+  animation-delay: calc(var(--ck-enter-index, 0) * 90ms);
+}
+
+.ck-pulse {
+  animation: ck-pulse 2.4s var(--ck-ease) infinite;
+}
+
+/**
+ * The scroll arrow: one slow fall, fading as it goes.
+ *
+ * Deliberately unhurried. A fast bounce reads as an alert; the point here is
+ * only to say the page continues. Travel is a fraction of the glyph so it never
+ * looks detached from the words above it.
+ */
+@keyframes ck-scroll-cue {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0.3rem);
+  }
+}
+
+.ck-scroll-cue {
+  animation: ck-scroll-cue 2.8s var(--ck-ease) infinite;
+}
+
+/* ===========================================================================
+   Print
+   ===========================================================================
+   The résumé's "PDF" is the browser's own print-to-PDF, rendering from the same
+   data as the page. Forces the light palette regardless of theme — printing a
+   dark theme wastes a cartridge and reads badly — and drops the chrome that
+   means nothing on paper.
+=========================================================================== */
+
+@media print {
+  :root,
+  :root[data-theme="ember"],
+  :root[data-theme="contrast"],
+  :root[data-mode="dark"] {
+    --ck-background: #ffffff;
+    --ck-foreground: #000000;
+    --ck-card: #ffffff;
+    --ck-card-foreground: #000000;
+    --ck-muted: #ffffff;
+    --ck-muted-foreground: #1a1a1a;
+    --ck-primary: #000000;
+    --ck-primary-hover: #000000;
+    --ck-accent-hover: #ffffff;
+    --ck-primary-foreground: #ffffff;
+    --ck-accent: #ffffff;
+    --ck-accent-foreground: #000000;
+    --ck-mark-ground: #000000;
+    --ck-mark-ink: #ffffff;
+    --ck-positive: #ffffff;
+    --ck-positive-foreground: #000000;
+    --ck-destructive: #ffffff;
+    --ck-destructive-foreground: #000000;
+    --ck-border: #999999;
+    --ck-input: #333333;
+  }
+
+  /* Site chrome is dropped on paper — a printed résumé should be the document
+     and nothing else. */
+  [data-slot="site-header"],
+  [data-slot="site-footer"],
+  [data-slot="control-bar"],
+  [popover] {
+    display: none !important;
+  }
+
+  body {
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  /* Print the destination of a link the reader cannot click. */
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #333333;
+    word-break: break-all;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}
+
+/* ===========================================================================
+   Typewriter
+   ===========================================================================
+   The hero and the style guide's source panel are both written out a character
+   at a time by JavaScript. What lives here is only what CSS is better at: the
+   caret's two states.
+
+   The timing lives in the components, because they are what decide when to
+   pause. Splitting it across both would mean two places to keep in step.
+=========================================================================== */
+
+/**
+ * The block caret, in two states.
+ *
+ * Solid while text is actually being written or erased, and shimmering while
+ * the line is between revisions — the difference between a machine typing and a
+ * machine deciding. A hard blink would read as an idle terminal; the soft
+ * oscillation reads as thinking.
+ */
+@keyframes ck-think {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scaleY(0.86);
+  }
+}
+
+.ck-caret-writing {
+  opacity: 1;
+}
+
+.ck-caret-thinking {
+  transform-origin: center;
+  animation: ck-think 1.15s var(--ck-ease) infinite;
+}
+
+/* --- card glow ------------------------------------------------------------ */
+
+/* A fixed gradient that blooms from the top-left corner on hover.
+
+   Painted once and never moved: only `opacity` animates, so this composites and
+   costs nothing per frame. An earlier version tracked the pointer, which meant
+   a listener, a rAF loop, and a transform update on every move — a lot of
+   machinery for a decoration, and this reads better without it.
+
+   Pointer devices only. A touch device has no hover to reveal it with, and a
+   gradient stuck permanently on a card is not the effect. */
+@media (hover: hover) and (pointer: fine) {
+  /* `isolation` is what makes the negative z-index below safe: it forces the
+     card to be a stacking context, so the glow paints above the card's own
+     background and below its content, and cannot escape behind the page.
+
+     The alternative — leaving the glow at z-index 0 and lifting every child
+     above it — is what shipped first, and it broke the stretched link. The
+     link's ::after lives inside the heading, so promoting the siblings put the
+     summary, badges, and "Read case study" above the overlay and every click
+     below the heading landed on a paragraph instead of the card. Content that
+     is never positioned cannot get in front of the overlay by accident. */
+  [data-glow] {
+    isolation: isolate;
+  }
+
+  [data-glow]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      22rem circle at 0% 0%,
+      var(--ck-accent),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity var(--ck-duration-base) var(--ck-ease);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* The case study card's arrow sits top right, and its result chip is the
+     same accent as the glow — blooming from the left washed the chip out.
+     From the arrow's corner, the light lands on the call to action. */
+  [data-glow="end"]::before {
+    background: radial-gradient(
+      22rem circle at 100% 0%,
+      var(--ck-accent),
+      transparent 70%
+    );
+  }
+
+  [data-glow]:hover::before,
+  [data-glow]:focus-within::before {
+    opacity: 1;
+  }
+}
+
+/* --- skeletons ------------------------------------------------------------ */
+
+/* Opacity only — it composites, where a shimmering gradient repaints on every
+   frame for the entire time the page is loading, which is the worst possible
+   moment to be spending frames. */
+@keyframes ck-skeleton {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.ck-skeleton {
+  animation: ck-skeleton 1.6s var(--ck-ease) infinite;
+}
+
+/* --- view transitions ---------------------------------------------------- */
+
+/* The handoff from a loading skeleton to the content it stood in for.
+   Vertical direction carries the meaning: the placeholder yields downward, the
+   real thing arrives from below. Without it the skeleton vanishes and the
+   content pops, which reads as a glitch rather than as an arrival.
+
+   Asymmetric on purpose — the exit is quick because nobody wants to watch a
+   placeholder leave, and the enter is slower and starts only once it has, so
+   the two never overlap into a smear. */
+@keyframes ck-reveal-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ck-reveal-slide {
+  from {
+    transform: translateY(1.25rem);
+  }
+}
+
+::view-transition-old(.reveal-out) {
+  animation:
+    var(--ck-duration-fast) var(--ck-ease) both ck-reveal-fade reverse,
+    var(--ck-duration-fast) var(--ck-ease) both ck-reveal-slide reverse;
+}
+
+::view-transition-new(.reveal-in) {
+  animation:
+    var(--ck-duration-base) var(--ck-ease) var(--ck-duration-fast) both
+      ck-reveal-fade,
+    var(--ck-duration-slow) var(--ck-ease) both ck-reveal-slide;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ck-skeleton {
+    animation: none;
+  }
+
+  /* No slide, no fade. The content still arrives; it just cuts. */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+
+  /* The caret stops moving. It is not hidden: the components stop typing under
+     reduced motion, so the caret is only ever shown at rest, and a resting
+     caret still says where the text ends. */
+  .ck-caret-thinking {
+    animation: none;
+  }
+
+  .ck-enter {
+    opacity: 1;
+    animation: none;
+  }
+
+  .ck-pulse {
+    animation: none;
+  }
+
+  /* Held at full strength, not at whichever keyframe the blanket rule below
+     would land on — a half-faded arrow reads as disabled. */
+  .ck-scroll-cue {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

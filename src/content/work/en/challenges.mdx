@@ -1,0 +1,120 @@
+---
+title: Movement challenges: Leaderboards and targets that build a daily habit
+role: Product design, behavior change
+year: 2023–2024
+stack: [Web portal, Mobile, Figma]
+summary: Daily 5 completions rose 65%, with leaderboards scored so a five-person crew can beat a fifty-person one.
+user: A reason to do the Daily 5 every day.
+business: More registrations, sign-ins, and Daily 5 completions, Vimocity’s key engagement metric.
+connects: [challenge-admin, login]
+area: workers
+medal: podium
+order: 4
+impact: +65% Daily 5 completions in challenges
+---
+
+## Problem
+
+The Daily 5 is a full-body movement routine that takes five minutes or less.
+Done consistently, it has been shown to help prevent injuries on the job, along
+with the stiffness and soreness that physical work often causes.
+
+Daily 5 completions are Vimocity’s key engagement metric, and one of our main
+goals is helping workers make the routine part of their day, on the job and
+off. So we built challenges: a layer of competition that puts teams of
+coworkers head-to-head. This was 0→1. There was no challenges feature to
+improve on, so the scoring, the join windows and the challenge types were all
+decisions rather than inheritances.
+
+> **Design challenge:** letting teams of very different sizes compete on a
+> level playing field. We normalized leaderboard scores to completion rate
+> rather than totals, so a small crew can compete against a large one. A team
+> earns up to 100 points a day: the share of its members who completed the
+> Daily 5.
+
+<Figure
+  caption="An example day on the leaderboard: five of five beats forty-five of fifty. Crews under the five-person minimum play for a lower ceiling, so going small isn’t a shortcut."
+>
+  <TeamScoring />
+</Figure>
+
+## What I did
+
+- **Started with research.** We talked with customers to find the main UX
+  challenge: how to get more people completing the Daily 5. I then tested each
+  mechanic with customers and non-customers.
+- **Made it easy to compete.** Completing the Daily 5 is all it takes to take
+  part in a challenge.
+- **Time-boxed every challenge.** Join windows run from a week to over a month,
+  so a challenge reads as an event with an end.
+- **Designed two challenge types:** a leaderboard for teams and a target
+  challenge for individuals. A third type, team targets, was retired after low
+  participation.
+
+### Leaderboard
+
+Teams of coworkers compete for the top of the leaderboard, and the team on top
+when it ends wins.
+
+<GatedFigure
+  src="challenges/leaderboard-desktop.webp"
+  dark="challenges/leaderboard-desktop-dark.webp"
+  width={2560}
+  height={1600}
+  alt="A leaderboard challenge in the Vimocity web portal: the worker’s team, Product Team, ranked first, a warning that a team needs at least five players to earn the full 100 daily points, today’s progress, and total team points."
+  phone={{
+    src: "challenges/leaderboard-phone.webp",
+    dark: "challenges/leaderboard-phone-dark.webp",
+    width: 750,
+    height: 1624,
+    alt: "The same leaderboard challenge on a phone: the challenge header, then the Daily 5 to watch for credit, then the team’s progress.",
+  }}
+  caption="A leaderboard challenge from a worker’s side. Today’s progress counts the share of the team that logged the Daily 5, and the warning says why a crew under five can’t reach 100 points."
+/>
+
+### Individual target
+
+No leaderboard and no ranking. Each person works toward their own target.
+
+<GatedFigure
+  src="challenges/target-desktop.webp"
+  dark="challenges/target-desktop-dark.webp"
+  width={2560}
+  height={1600}
+  alt="The October Target Challenge in the Vimocity web portal: one Daily 5 logged, zero of seven raffle tickets earned, a progress track with a ticket every three sessions, and how the challenge works."
+  phone={{
+    src: "challenges/target-phone.webp",
+    dark: "challenges/target-phone-dark.webp",
+    width: 750,
+    height: 1624,
+    alt: "The same target challenge on a phone, with the progress track and raffle tickets stacked under the header.",
+  }}
+  caption="A target challenge in progress: every three Daily 5s earns a raffle ticket, and the track shows how far it is to the next one."
+/>
+
+
+## Outcome
+
+<Stats>
+  <Stat value="+65%" label="Daily 5 completions among challenge participants" />
+  <Stat value="+25%" label="registrations from people joining a challenge" />
+  <Stat
+    value="10% vs 4%"
+    label="of challenge viewers signed in within a week, compared with everyone else"
+  />
+  <Stat value="+61%" label="sign-ins in months with a major challenge" />
+</Stats>
+
+Leaderboards drew the highest engagement of any challenge type. Between
+challenges, Daily 5 engagement dropped: competition built the routine, but
+didn’t hold it.
+
+**Who did what:** I owned design from research through UI. Engineering built
+it, and we worked out the mechanics as a team.
+
+> **What I’d change:** two things. First, the 100-point cap. Committed crews all
+> max out and tie, and the tiebreaker (largest team, then a random draw) hands
+> the win back to the bigger team, the bias normalizing was meant to remove. The
+> next iteration makes full completion the entry price, not the max score.
+> Second, bonus points for watching safety videos beyond the Daily 5, so
+> challenges also grow viewership of our safety content.

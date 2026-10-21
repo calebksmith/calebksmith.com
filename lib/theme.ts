@@ -1,0 +1,37 @@
+/**
+ * Theme and mode options.
+ *
+ * Two independent axes, both stamped on <html>:
+ *   data-theme  the color set   (default is the absence of the attribute)
+ *   data-mode   light or dark   (system is the absence of the attribute)
+ *
+ * Persistence is a cookie, not localStorage — browser storage is off limits in
+ * this codebase, and a cookie has the useful property of being readable before
+ * first paint, which is what keeps the page from flashing the wrong theme.
+ */
+
+export const THEME_COOKIE = "ck-theme";
+export const MODE_COOKIE = "ck-mode";
+
+/**
+ * The inspector's mode, stamped on <html> like theme and mode.
+ *
+ * Deliberately not persisted to a cookie: inspecting is something you do for a
+ * minute, not a preference. Restoring it on the next visit would leave a
+ * debugging overlay covering a portfolio a recruiter just opened.
+ */
+export const INSPECT_ATTRIBUTE = "data-inspect";
+
+/** A year. The preference is not sensitive and should outlive the session. */
+export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+/** Theme and mode values. Their labels are copy, in `lib/i18n/messages/`. */
+export const THEMES = ["default", "ember", "contrast"] as const;
+
+export const MODES = ["system", "light", "dark"] as const;
+
+export type Theme = (typeof THEMES)[number];
+export type Mode = (typeof MODES)[number];
+
+export const DEFAULT_THEME: Theme = "default";
+export const DEFAULT_MODE: Mode = "system";

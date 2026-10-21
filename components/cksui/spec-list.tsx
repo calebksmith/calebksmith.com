@@ -1,0 +1,59 @@
+import type { ComponentProps, ReactNode } from "react";
+
+import { cn } from "./lib/cn";
+import { Eyebrow } from "./eyebrow";
+
+/**
+ * A label/value list drawn with hairline rules.
+ *
+ * A <dl> rather than a table, because these are term/description pairs and not
+ * tabular data — a screen reader should announce "Focus, design systems", not
+ * "row 1, column 1".
+ *
+ * `ruled={false}` drops the hairlines, for a short list that sits in a
+ * header where spacing already separates the rows.
+ */
+export function SpecList({
+  ruled = true,
+  className,
+  ...props
+}: ComponentProps<"dl"> & { ruled?: boolean }) {
+  return (
+    <dl
+      data-slot="spec-list"
+      className={cn(
+        ruled
+          ? "border-t border-border"
+          : "[&>[data-slot=spec-row]]:border-b-0 [&>[data-slot=spec-row]]:py-2",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function SpecRow({
+  label,
+  children,
+  className,
+  ...props
+}: Omit<ComponentProps<"div">, "children"> & {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      data-slot="spec-row"
+      className={cn(
+        "grid grid-cols-1 gap-1 border-b border-border py-3 sm:grid-cols-[8rem_1fr] sm:gap-6",
+        className,
+      )}
+      {...props}
+    >
+      <Eyebrow asChild>
+        <dt>{label}</dt>
+      </Eyebrow>
+      <dd className="flex items-center gap-2.5 text-foreground">{children}</dd>
+    </div>
+  );
+}

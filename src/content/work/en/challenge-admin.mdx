@@ -1,0 +1,72 @@
+---
+title: Challenge admin: A self-serve tool for running challenges
+role: Product design, admin tools
+year: 2023–2024
+stack: [Web portal, Figma]
+summary: Setup, the raffle draw, and every email in the admin’s hands, so running a challenge stops being a support request.
+user: Self-serve challenges, emails and prize draw included.
+business: Challenges that run as often as customers want, without a support request.
+connects: [challenges]
+area: admins
+medal: checklist
+order: 5
+impact: +143% admin users in 2026
+---
+
+## Problem
+
+[Challenges](/work/challenges) worked, but running one didn’t scale. Every
+challenge meant a request to us: configure it, write the invitation, remember
+the reminders, work out who won. Challenges work best when they repeat, so our
+goal was for admins to run them on their own, as often as they want. Like
+challenges, this was 0→1: before it, there was no admin tool at all, only a
+request to us.
+
+> **Design challenge:** knowing what admins would need before any of them had
+> run a challenge. We designed the admin tool second, on purpose: it came after
+> challenges had run, so its shape came from watching real admins instead of
+> guessing. It stayed web-only, because setting up a challenge is a sit-down
+> task, done once.
+
+## What I did
+
+- **Designed a setup flow for admins.** They choose the type, dates, and
+  prizes, and set the rules each type needs, like maximum team size.
+- **Automated the emails.** Creating a challenge sends the invitation,
+  reminders go out during the run, and a results email names the winner.
+- **Built in the raffle draw.** Entries build up per participant through the
+  run, and at the end an admin draws a winner instead of exporting a
+  spreadsheet and trusting it.
+
+<Figure
+  caption="One challenge, start to finish. The steps marked with a person are the admin’s, at the start and the end; the middle runs on its own."
+>
+  <ChallengeRun />
+</Figure>
+
+<GatedFigure
+  src="challenge-admin/admin-tasks-desktop.webp"
+  dark="challenge-admin/admin-tasks-desktop-dark.webp"
+  width={2560}
+  height={1600}
+  alt="A leaderboard challenge in the admin view of the Vimocity web portal: tabs for participants, teams, prizes, and support, the prize list, and the Admin tasks checklist at two of three complete, with Award winning team’s prize available once the challenge ends."
+  phone={{
+    src: "challenge-admin/admin-tasks-phone.webp",
+    dark: "challenge-admin/admin-tasks-phone-dark.webp",
+    width: 750,
+    height: 1624,
+    alt: "The same admin view on a phone: the challenge header and actions, then the tabs and the prize list, with the Admin tasks checklist below.",
+  }}
+  caption="The admin’s side of the same run, as a checklist: add participants and publish, then, once it ends, award the winning team’s prize."
+/>
+
+## Outcome
+
+<Stats>
+  <Stat value="+143%" label="monthly admin users, January to September 2026" />
+  <Stat value=">3" label="challenges per organization, on average, over two years" />
+</Stats>
+
+**Who did what:** I led design and UI. Engineering built the tool and the
+automated sends; product management and leadership shaped what an admin can
+configure.

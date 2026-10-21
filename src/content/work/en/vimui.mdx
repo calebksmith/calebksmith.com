@@ -1,0 +1,82 @@
+---
+title: VimUI: Vimocity’s design system, built in code
+role: Design systems
+year: 2022–present
+stack: [Storybook, Tailwind CSS, shadcn/ui, Radix]
+summary: 50+ web components on shared tokens, with code as the source of truth instead of a Figma file.
+user: The same components, accessibility, and light and dark modes across the web portal.
+business: Pages built from parts that already exist, and every change made once.
+connects: [guardrails, platform-rebuild, login]
+area: platform
+medal: components
+order: 1
+impact: Reuse ~10% → 80–90%
+---
+
+## Problem
+
+Vimocity’s web portal, mobile apps, and V-minder, the Windows app, had each
+drifted into their own patterns. Our goal was one system the whole product
+could be built from. VimUI started as a thorough Figma system, with published
+libraries, variables and modes, and versioned releases. But every change
+happened twice, in Figma and then in code, and the second pass pulled a
+developer off their work to translate the file.
+
+<Figure
+  ratio="1200/1072"
+  caption="The Media Card in the Figma library, before it moved to code. Every variant and state on this sheet also had to exist in code."
+>
+  <img
+    src="/media/vimui/media-card.webp"
+    alt="A Figma component sheet for the Media Card: horizontal and vertical variants, watch-status labels, thumbnail types, and an overflow menu with Save to Playlist and Share."
+    width={1200}
+    height={1072}
+    className="h-full w-full object-contain"
+  />
+</Figure>
+
+> **Design challenge:** keeping design and code in sync without making every
+> change twice. Once we prototyped in real components, the Figma file was a
+> second copy of something that already existed, so we retired it and made code
+> the source of truth. I knew Figma well enough to see where it stopped paying
+> off.
+
+## What I did
+
+- **Built 50+ components in code.** They follow atomic design (atoms,
+  molecules, and organisms), starting from open-source foundations and
+  rewritten where we needed more.
+- **Tokenized color, type, spacing, and sizing.** Hardcoded values came out of
+  the frontend.
+- **Built accessibility into every component.** Keyboard support, contrast in
+  both modes, touch targets, and reduced motion come with the component, so
+  every feature inherits them.
+- **Released it in versions.** Apps can test a change before it lands.
+- **Used AI to speed up the handoff.** Until the Figma file was retired, I fed
+  designs to Claude Code through Figma’s APIs.
+
+## Outcome
+
+<Stats>
+  <Stat value="~10% → 80–90%" label="of frontend code built from reusable components" />
+  <Stat value="0% → 99%" label="token use; the last 1% is deliberate overrides" />
+</Stats>
+
+Changes now happen once, in code.
+
+**Who did what:** I built VimUI and maintain it. The engineering team builds the
+web portal from it, and I review their frontend changes.
+
+> **What I’d change:** generate every platform’s tokens from one file. The
+> components are the web portal’s alone, and the other apps get the tokens
+> copied by hand, so consistency there holds by discipline rather than by a
+> build step.
+
+<Figure
+  caption="Tokens reach all four platforms; components reach one. Login runs in a webview, so it’s the one place real VimUI renders everywhere."
+>
+  <SystemReach />
+</Figure>
+
+**See it:** the component library is public at
+[vimui.vimocity.com](https://vimui.vimocity.com/main/).

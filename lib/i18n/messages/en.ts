@@ -1,0 +1,945 @@
+/**
+ * Every UI string on the public site, in English.
+ *
+ * This file is the source of truth for interface copy: labels, headings, page
+ * intros, the hero, the homepage tiles. Long-form writing — case studies and
+ * the colophon — is MDX under `src/content/`, one file per locale.
+ *
+ * Its shape is the contract for every other locale. A translation is typed as
+ * `Messages`, so a missing or misnamed key is a build error rather than a blank
+ * on the page.
+ *
+ * Strings marked "rich" may contain `<code>`, `<strong>`, and `<em>`, rendered
+ * by `components/rich-text.tsx`. Nothing else is interpreted.
+ */
+
+export const en = {
+  site: {
+    role: "Product design manager",
+    lede: "I design products and write the frontend code they’re built from.",
+    /** Rendered in order, as written. */
+    spec: [
+      { label: "Focus", value: "Design systems, product design, frontend" },
+      { label: "Stack", value: "TypeScript, React, Next.js, Tailwind" },
+      { label: "Platforms", value: "Web, iOS, Android, Desktop" },
+      { label: "Based", value: "Seattle, Washington" },
+    ],
+    linkLabels: {
+      linkedin: "LinkedIn",
+      vimui: "VimUI — design system",
+    },
+  },
+
+  chrome: {
+    skipLink: "Skip to content",
+    footer: "Designed and built by me",
+    /**
+     * The one contact method, on every page. LinkedIn only: no email address
+     * on the site, and no contact form to maintain. See issue #1.
+     */
+    contact: "LinkedIn",
+    /** The public repository this site is built from. */
+    source: "Source",
+    opensInNewTab: "(opens in a new tab)",
+  },
+
+  header: {
+    breadcrumb: "Breadcrumb",
+    home: "CS — Caleb Smith, home",
+    /** Labels for top-level segments. Anything absent falls back to the segment. */
+    segments: {
+      work: "Work",
+      "style-guide": "Style guide",
+      colophon: "Colophon",
+      experience: "Experience",
+      "sign-in": "Sign in",
+    } as Record<string, string>,
+    work: "Work",
+    workMenu: "Case studies",
+    controls: "Site controls",
+    appearance: "Appearance",
+    appearanceSettings: "Appearance settings",
+    styleGuideLink: "Style guide: tokens, type, and contrast →",
+    inspect: "Inspect",
+    /** The language toggle. Its own label is written in the target language. */
+    language: "Language",
+  },
+
+  themeSwitcher: {
+    theme: "Theme",
+    mode: "Mode",
+    themes: { default: "Default", ember: "Ember", contrast: "High contrast" },
+    modes: { system: "System", light: "Light", dark: "Dark" },
+  },
+
+  inspector: {
+    title: "Inspector",
+    description: "What each element is, and which tokens it resolves to.",
+    component: "Component",
+    element: "Element",
+    inside: "inside",
+    tokens: "Tokens",
+    noToken: "no token",
+    type: "Type",
+    family: "Family",
+    size: "Size",
+    weight: "Weight",
+    leading: "Leading",
+    rule: "Rule",
+    empty: "Hover or tab to any element to inspect it.",
+    exit: "Esc to exit",
+    faces: { display: "Archivo — display", body: "IBM Plex Mono — body" },
+    properties: {
+      "background-color": "Surface",
+      color: "Text",
+      "border-top-color": "Border",
+      "outline-color": "Ring",
+    } as Record<string, string>,
+    /**
+     * What governs each component. Only slots with a rule worth stating are
+     * listed; the rest report their tokens and nothing invented.
+     */
+    rules: {
+      button:
+        "Every variant pairs a surface with its foreground. Minimum target 44px, enforced in the component.",
+      badge:
+        "Pairs only — a badge never sets a foreground its surface doesn’t own.",
+      card: "Carries text-card-foreground with its background, so nested content inherits a legible color.",
+      "card-title": "Display face, balanced wrapping, no color of its own.",
+      "card-description": "muted-foreground on the card surface.",
+      "spec-list":
+        "A <dl>, not a table — term and description, not tabular data.",
+      "spec-row": "Label in muted-foreground, value in foreground.",
+      "status-dot":
+        "Decorative: aria-hidden, visible at rest, no-op under reduced motion. The label carries the meaning.",
+      "control-bar":
+        "Ghost by design — no border against the header’s own rule. Grouped by proximity and announced once.",
+      "control-button":
+        "Instrument, not navigation. Inset focus ring so it never spills past the header.",
+      "control-toggle":
+        "aria-pressed, because it turns a page mode on rather than submitting a value.",
+      "site-header":
+        "Two zones: the path is plain text, the instruments are controls.",
+      "theme-switcher":
+        "Radio inputs, so arrow-key navigation and correct announcements come from the platform.",
+      "case-study-card":
+        "Filled, so it reads as work beside the unfilled pointer cards, even in one column. Its small label names who the work serves.",
+      "pointer-card": "Unfilled, so navigation never reads as work.",
+      "stat-group":
+        "As many across as fit: two, three, or four results lay out evenly without a rule per count.",
+      stat: "Figure first, label second, on the card surface. The label carries any caveat the number needs.",
+      "gated-figure":
+        "Locked by default: the screenshot’s own frame, neutral shapes blurred past recognition, and a request for access. A browser without access never requests the image.",
+      "device-figure":
+        "A monitor and a phone showing the same state. Each screen holds its space from its own ratio, so nothing moves as the images load.",
+      "gated-screens":
+        "What someone with an access link sees in a gated pair, with the light and dark switch. Only the chosen mode’s images are requested.",
+      table:
+        "A grid of facts as a real table: header cells name their column, and the first cell of each row names its row.",
+      medal:
+        "The case study’s medal, on the logo’s tile and in the mark’s colors. Decorative; the name beside it is what’s read.",
+      icon: "Decorative: aria-hidden, in currentColor. The control or link around it carries the name.",
+      "page-title":
+        "The page’s one <h1>, in the display face at a size that scales with the window.",
+      tabs: "Segmented tabs: arrow keys move between views, and every view stays in the page, hidden rather than removed, so it still works without JavaScript.",
+      "bento-tile":
+        "Span follows content weight; hierarchy also carried by type scale.",
+    } as Record<string, string>,
+  },
+
+  home: {
+    hero: {
+      question: "What else would you like to know?",
+      /**
+       * The chips are first person, in Caleb's voice — the question above them
+       * addresses the visitor, but these are things he can tell you about
+       * himself. Link titles must match the case study's own title; the
+       * integrity test checks it.
+       */
+      prompts: [
+        {
+          id: "built",
+          question: "What have I built lately?",
+          answer:
+            "I rebuilt Vimocity’s web portal on VimUI, our design system of 50+ web components. Every page now runs on one codebase, a stronger foundation for our CI/CD pipeline, so we can improve features and release new ones faster. Weekly web users held steady through the move.",
+          link: {
+            href: "/work/platform-rebuild",
+            kind: "Case study",
+            title: "Web portal rebuild: Migrating every page to one codebase",
+          },
+        },
+        {
+          id: "different",
+          question: "What is my role at Vimocity?",
+          // The scope of the job first: he leads Vimocity's design work and
+          // decides what gets built together with developers and the business
+          // side. The second sentence keeps the working method concrete
+          // without making the title the point.
+          //
+          // The 80% is the share of the frontend code he prototypes that reaches
+          // production, in the same words as the résumé. One number, one meaning:
+          // see CLAUDE.md.
+          answer:
+            "I lead design at Vimocity, talking with customers and deciding what we build with our developers and business managers. All of our features are designed in real components, so developers get working code instead of a spec to rebuild. About 80% of the frontend code I prototype reaches production.",
+          link: {
+            href: "/work/guardrails",
+            kind: "Case study",
+            title:
+              "Design guardrails: Keeping AI-written code on the design system",
+          },
+        },
+        {
+          id: "overengineered",
+          question: "Anything overengineered here?",
+          // The one question that isn't about the job — and the answer is
+          // literally true. The hero types itself, reserves its height so the
+          // page never jumps, announces the finished sentence once to screen
+          // readers, and has a no-JavaScript fallback. Humor that is also a
+          // receipt for the craft.
+          answer:
+            "This, probably. The answer types itself, holds the page still while it does, reads to screen readers as one sentence, and works with JavaScript off. I regret nothing.",
+          link: {
+            href: "/colophon",
+            kind: "Colophon",
+            title: "How this site is built, and why",
+          },
+        },
+      ] as {
+        id: string;
+        question: string;
+        answer: string;
+        link: { href: string; kind: string; title: string } | null;
+      }[],
+    },
+    scrollCue: "See my work",
+    /** The work section: what Vimocity is, then the case studies as cards. */
+    work: {
+      heading: "Vimocity",
+      /** What Vimocity is, and what the product team is working toward. */
+      intro:
+        "We are a workplace health and safety platform built for utility companies. I lead product design on the features and tools that safety leaders use to keep their crews safe.",
+    },
+    pointers: {
+      vimui: {
+        eyebrow: "Storybook",
+        title: "VimUI, live",
+        description:
+          "Vimocity’s public design system: 50+ components on shared tokens.",
+      },
+      practice: {
+        eyebrow: "Studio",
+        title: "Modern Trailhead",
+        description:
+          "My studio since 2016: websites, video, and photo for brands like Brooks Running and Shake Shack.",
+      },
+      colophon: {
+        eyebrow: "About this site",
+        title: "Colophon",
+        description:
+          "The stack, the alternatives that lost, and what each choice cost.",
+      },
+      source: {
+        eyebrow: "About this site",
+        title: "Source code",
+        description: "The components, tokens, and checks behind this site.",
+      },
+      styleGuide: {
+        eyebrow: "About this site",
+        title: "Style guide",
+        description:
+          "Every token and component, measured live in your current theme.",
+      },
+      linkedin: {
+        eyebrow: "Profile",
+        title: "LinkedIn",
+        description: "My background and roles, in full.",
+      },
+    },
+    /**
+     * The close of the homepage, and the lead-in to its one call to action:
+     * the path in brief, so "My experience" reads as the full version of it,
+     * then one line of who he is outside work. Nothing here repeats the page
+     * above it.
+     */
+    tldr: {
+      heading: "How I got here",
+      paragraphs: [
+        "I started out designing and building websites, and shooting the photos and video for them. At Vimocity, I began in design, video, and motion graphics, then moved into designing and building the platform itself.",
+        "Outside work, I’m a dog and human dad in Seattle, and I love coffee, breweries, and travel. Our last trip was Greece and Turkey; Scotland is next.",
+      ],
+      cta: "My experience →",
+    },
+  },
+
+  /** Labels drawn inside the case study diagrams in components/diagrams/. */
+  diagrams: {
+    deviceHandoff: {
+      label:
+        "A magic link opens on the phone that received the email, leaving the shared terminal signed out. A six-digit code can be read on the phone and typed on the terminal.",
+      phone: "Phone",
+      emailArrives: "email arrives here",
+      terminal: "Shared terminal",
+      signingIn: "signing in here",
+      linkOpens: "Magic link opens on the phone.",
+      staysSignedOut: "The terminal stays signed out.",
+      code: "Six-digit code: read here, typed there",
+    },
+    systemReach: {
+      label:
+        "Tokens reach all four platforms, but only the web portal reads them directly; iOS, Android, and Windows get them copied by hand. The VimUI component library reaches the web portal alone, and the other three carry their own components. Login and account creation are the exception: they run in a webview, so real VimUI components render on all four platforms.",
+      title: "WHAT REACHES WHICH PLATFORM",
+      columns: {
+        web: "Web portal",
+        ios: "iOS",
+        android: "Android",
+        windows: "Windows",
+      },
+      separateCodebases: "React Native and Electron: separate codebases",
+      oneCodebase: "one codebase",
+      sourceOfTruth: "source of truth",
+      copiedByHand: "copied by hand",
+      vimui: "VimUI",
+      itsOwn: "its own",
+      tokens: { name: "Tokens", note: "color, type, spacing" },
+      components: { name: "Components", note: "50+, React and Radix" },
+      login: { name: "Login & account", note: "runs in a webview" },
+    },
+    loginEverywhere: {
+      label:
+        "The same Vimocity login screen in three places: the web portal in a browser, the iOS and Android apps through a webview, and V-minder, the Windows app.",
+      url: "portal.vimocity.com",
+      appTitle: "V-minder",
+      web: "Web portal",
+      mobile: "iOS and Android apps",
+      mobileNote: "through a webview",
+      desktop: "V-minder, the Windows app",
+    },
+    enforcement: {
+      label:
+        "One design standard, checked at three points in a change. While the code is written, the coding agent starts from the repository rules. Mid-build, anyone can run the design-audit skill, which says what to fix. Before merge, lint rules run on every push: errors block the merge, and warnings flag a deliberate exception for review.",
+      title: "WHERE THE STANDARD IS CHECKED",
+      change: "A change, from prompt to merge",
+      /** Each `note` is drawn as lines, about 26 characters each at most. */
+      stages: [
+        {
+          when: "While writing",
+          what: "Agent rules",
+          note: ["Rules the coding agent", "reads before it writes"],
+        },
+        {
+          when: "Mid-build",
+          what: "Design-audit skill",
+          note: ["A checklist anyone runs", "that says what to fix"],
+        },
+        {
+          when: "Before merge",
+          what: "Lint gate",
+          note: ["Every push, any author"],
+        },
+      ],
+      error: "Error: blocks merge",
+      warning: "Warning: flags for review",
+    },
+    challengeRun: {
+      label:
+        "One challenge, start to finish. At the start, the admin sets it up and publishes it, and the invitation is emailed on its own. While it runs, reminders are emailed and raffle entries add up, with nothing for the admin to do. At the end, the admin draws the raffle winner and marks it complete, and the results are emailed.",
+      title: "ONE CHALLENGE, START TO FINISH",
+      admin: "Admin does it",
+      automatic: "Happens on its own",
+      phases: { setup: "Start", run: "While it runs", end: "End" },
+      setup: "Set up and publish",
+      draw: "Draw the raffle winner",
+      complete: "Mark complete",
+      invitation: "Invitation emailed",
+      reminders: "Reminders emailed",
+      results: "Results emailed",
+      entries: "Raffle entries add up",
+    },
+    pageByPage: {
+      label:
+        "The web portal rebuild, one page at a time. Claude Code reads a legacy page’s logic, API calls, and data. The page is rebuilt from VimUI against the same APIs, checked by the guardrails, then reviewed and hardened by engineering before it goes live. Then the next page.",
+      title: "EVERY PAGE, ONE AT A TIME",
+      from: "Legacy web portal",
+      to: "One codebase",
+      next: "next page",
+      /** Each `note` is drawn as lines, about 18 characters each at most. */
+      steps: [
+        { what: "Read", note: ["Claude Code maps", "logic, APIs, data"] },
+        { what: "Rebuild", note: ["From VimUI,", "same APIs"] },
+        { what: "Check", note: ["Guardrails,", "automatically"] },
+        { what: "Review", note: ["Engineering", "hardens it"] },
+      ],
+    },
+    workday: {
+      label:
+        "An example workday with V-minder, weekdays from 9 AM to 5 PM with a move every hour: eight scheduled moves, standing and seated in turn. The 11 AM move is snoozed for 15 minutes, and one extra standing move is played off schedule in the afternoon.",
+      title: "AN EXAMPLE WORKDAY",
+      setting: "Weekdays, 9 AM to 5 PM, a move every hour",
+      hours: ["9 AM", "11 AM", "1 PM", "3 PM", "5 PM"],
+      snoozed: "Snoozed 15 min",
+      offSchedule: "Played off schedule",
+      standing: "Standing move",
+      seated: "Seated move",
+      total: "8 moves a day, set by the user",
+    },
+    teamScoring: {
+      label:
+        "On an example day, a crew of five with all five completing scores 100. A team of fifty with forty-five completing scores 90. A crew of four, below a minimum of five, scores at most 80.",
+      title: "EXAMPLE DAY OF A LEADERBOARD CHALLENGE",
+      crew5: "Crew of 5",
+      completed5: "5 of 5 completed",
+      team50: "Team of 50",
+      completed45: "45 of 50",
+      crew4: "Crew of 4",
+      minimum: "minimum is 5",
+      placeShort: "4 of 4, but a place short",
+      pts: "pts",
+      max: "max",
+    },
+  },
+
+  /**
+   * Over a locked screenshot from inside Vimocity's app, for visitors without
+   * an access link. It should read as something worth asking for.
+   */
+  gated: {
+    title: "This design is restricted",
+    note: "Available to hiring teams on request.",
+    ask: "Request access on LinkedIn",
+  },
+
+  /** The light and dark switch over a screenshot captured in both modes. */
+  screenModes: {
+    group: "Screenshot color mode",
+    light: "Light",
+    dark: "Dark",
+  },
+
+  caseStudy: {
+    moreWork: "More of my work",
+    loading: "Loading case study",
+    /** The why, in product terms: one line each, from the frontmatter. */
+    userValue: "User value",
+    businessValue: "Business value",
+    stack: "Stack",
+    connects: "Related case studies",
+    keyResult: "Key result",
+    /**
+     * Who each case study serves, from its `area` frontmatter: shown as a
+     * small label on its card, so the cards read as groups without headings.
+     */
+    areas: {
+      workers: "Field-based workers",
+      "desk-workers": "Desk-based workers",
+      "safety-leaders": "Safety leaders",
+      admins: "Admins",
+      identity: "Identity",
+      platform: "Platform",
+    } as Record<string, string>,
+  },
+
+  experience: {
+    title: "Experience",
+    print: "Print / Save as PDF",
+    sections: {
+      summary: "Summary",
+      skills: "Skills",
+      experience: "Experience",
+      selectedWork: "Selected work",
+      education: "Education",
+    },
+  },
+
+  notFound: {
+    eyebrow: "404",
+    title: "That page doesn’t exist",
+    body: "The link may be out of date, or I may have moved something. Neither is your fault.",
+    home: "Back to the homepage →",
+    work: "Or see my work",
+  },
+
+  signIn: {
+    title: "Sign in",
+    body: "This part of the site is just for me.",
+    github: "Continue with GitHub",
+  },
+
+  colophon: {
+    metaTitle: "How this site is built",
+    metaDescription:
+      "The architecture behind this site — the alternatives that lost, and what each choice cost.",
+    eyebrow: "Colophon",
+    title: "How this site is built, and why",
+    intro:
+      "A stack list says what I installed. This says what the alternatives were, and what each choice cost.",
+    chosen: "Chosen",
+    rejected: "Rejected",
+  },
+
+  styleGuide: {
+    title: "Style guide",
+    metaDescription:
+      "The tokens, type, and components this site is built from — measured live, in whichever theme you are viewing.",
+    intro:
+      "Every color on this site comes from a token, and every token pair is measured. Switch themes or modes and the numbers below update — including the ones that would fail. Components are rendered from the same library the site is built from, so nothing here is a screenshot.",
+    nav: "Style guide sections",
+    sections: {
+      theme: "Theme",
+      color: "Color",
+      contrast: "Contrast",
+      typography: "Typography",
+      motion: "Motion",
+      components: "Component playground",
+      rules: "Rules",
+    },
+    /** rich */
+    theme:
+      "Three themes across light and dark, applied with <code>data-theme</code> and <code>data-mode</code> on <code>&lt;html&gt;</code>. Each is the same token names with different values, which is what makes the high-contrast theme a value swap rather than a rewrite. The preference is a cookie, read by a script before first paint — no browser storage, no flash.",
+    /** rich */
+    color:
+      "Colors are not a flat palette. Every surface has a paired foreground, so a component written as <code>bg-card text-card-foreground</code> is legible in every theme without anyone remembering which color goes where. Values below are read from the running page.",
+    contrast:
+      "Contrast is measured between a surface and the text or icon drawn on it, not between individual colors. WCAG AA requires 4.5:1 for body text and 3:1 for large text. AAA requires 7:1. The high-contrast theme is built to clear AAA on every pair.",
+    /** rich */
+    contrastNote:
+      "The same math runs at build time in <code>npm run check:contrast</code>, reading <code>globals.css</code> directly, so this page and the gate cannot disagree. Note that <code>--ck-border</code> is not held to 3:1: WCAG 1.4.11 governs control boundaries, not decorative hairlines, which is why <code>--ck-input</code> exists separately.",
+    typography:
+      "Archivo carries display type — headings and the name. IBM Plex Mono carries everything else: body copy, labels, tables, UI. The inversion of the usual serif-on-cream portfolio is deliberate.",
+    typeSamples: {
+      display: {
+        label: "Display · Archivo 600",
+        sample: "Design systems and the standards behind them",
+      },
+      heading: {
+        label: "Heading · Archivo 600",
+        sample: "VimUI: Vimocity’s design system, built in code",
+      },
+      body: {
+        label: "Body · IBM Plex Mono 400",
+        sample:
+          "I design products and write the frontend code they’re built from.",
+      },
+      label: {
+        label: "Label · IBM Plex Mono 400, uppercase, 0.14em",
+        sample: "Selected work",
+      },
+    },
+    /** rich */
+    motion:
+      "Three durations and one easing curve, read from the running page. Motion is set once for the whole system, so it stays consistent, and honoring <code>prefers-reduced-motion</code> is a single rule instead of a promise repeated in every component.",
+    /** rich */
+    components:
+      "cksUI — this site’s component library. Built on shadcn/ui’s patterns as source copied in and owned, not as an installed dependency, with every value rewritten onto the tokens above. Every component declares a <code>data-slot</code>, the same convention VimUI uses. The header, footer, skip link, theme switcher, and inspector aren’t repeated as specimens: each is live on this page, and a second copy would fight the first.",
+    inspectorEyebrow: "Try the inspector",
+    /** rich */
+    inspectorBody:
+      "Hit <strong>Inspect</strong> in the header and point at anything on this page — or tab through it, which works the same way. It reports the component, the tokens its rendered values resolve back to, and the rule behind them.",
+    /** rich */
+    inspectorNote:
+      "Values are read with <code>getComputedStyle</code> and resolved <em>backwards</em> to token names, so it reports on the token layer rather than dumping CSS. Anything resolving to no token is a violation of the rule in <code>CLAUDE.md</code>, and the panel says so rather than hiding it.",
+    /** rich */
+    playgroundNote:
+      "The source panel is not a code sample kept beside a demo. Each specimen is one tree, projected twice — once through <code>createElement</code> into the components on the left, once through a printer into the JSX on the right. There is no way to write code here that renders something else, which is the same reason the contrast table reads <code>globals.css</code> instead of keeping its own palette.",
+
+    /** rich */
+    rulesIntro:
+      "The standard everything above is held to. Each rule is written down for people in <code>CLAUDE.md</code>, loaded into the coding agent from the same file, and checked by a machine before anything merges — so it holds whether a person or an agent wrote the change.",
+    /**
+     * One row per rule: what it says, why it exists, and what enforces it.
+     * `check` is a command or rule name, shown as code.
+     */
+    rules: [
+      {
+        title: "Colors come from tokens",
+        why: "No hex, rgb, or palette colors in markup. A raw value is the one place a theme cannot reach.",
+        check: "ck/no-raw-color",
+      },
+      {
+        title: "Sizes come from the scale",
+        why: "No pixel values written into a class. A one-off number is how two components end up a pixel apart.",
+        check: "ck/no-arbitrary-px",
+      },
+      {
+        title: "Every surface is drawn with a measured text color",
+        why: "Any foreground will do, as long as the pair is one the contrast check measures. New tokens are not invented just to make a pair.",
+        check: "ck/paired-surface",
+      },
+      {
+        title: "Every pair clears WCAG AA",
+        why: "AAA in the high-contrast theme. Measured in all three themes and both modes, from the same file the site is styled with.",
+        check: "npm run check:contrast",
+      },
+      {
+        title: "Components say what they are",
+        why: "Every library component sets data-slot, so the inspector can name it and a reviewer can find it.",
+        check: "ck/require-data-slot",
+      },
+      {
+        title: "Words live in the dictionary, not the markup",
+        why: "Pages read copy from the locale file; library components take it as props. That is what makes a translation a new file rather than a rewrite.",
+        check: "ck/no-literal-copy",
+      },
+      {
+        title: "Markup is accessible",
+        why: "Semantic elements, keyboard-operable controls, real labels. The strict rule set, with no rules switched off to pass.",
+        check: "jsx-a11y/strict",
+      },
+      {
+        title: "One spelling, one number, nothing internal",
+        why: "House spellings and repeated figures stay consistent, stock phrasing is flagged, and nothing private reaches this public repository: no ticket keys, workspace links, or email addresses.",
+        check: "npm run check:copy",
+      },
+      {
+        title: "Every page scores 100",
+        why: "Accessibility, best practices, and SEO on Lighthouse’s mobile profile, on every pull request.",
+        check: "npm run lighthouse",
+      },
+    ],
+    rulesReview:
+      "What a machine cannot judge is a checklist the design-review skill walks through before a change ships: whether a token is the right one, whether a layout holds at a breakpoint, and whether the empty and error states exist. The ux-writing skill does the same for copy: voice, length, and one name per thing.",
+    rulesSource: "Read the rules and the lint plugin on GitHub →",
+
+    tokenTable: {
+      pairs: "Surface and foreground pairs",
+      structure: "Structure",
+      labels: {
+        background: "Page",
+        card: "Card",
+        muted: "Muted",
+        primary: "Primary",
+        accent: "Accent",
+        border: "Border",
+        input: "Input",
+        ring: "Ring",
+      } as Record<string, string>,
+      notes: {
+        border: "Decorative hairline",
+        input: "Control boundary · 3:1",
+        ring: "Focus indicator · 3:1",
+      } as Record<string, string>,
+    },
+
+    contrastTable: {
+      measuring: "Measuring the current theme…",
+      caption:
+        "Contrast ratio of each token pair in the current theme, with WCAG AA and AAA results",
+      /** Keyed `surface/foreground`, matching lib/contrast.ts. */
+      pairs: {
+        "background/foreground": "Background / text",
+        "card/card-foreground": "Card / text",
+        "muted/muted-foreground": "Muted / text",
+        "primary/primary-foreground": "Primary / text",
+        "accent/accent-foreground": "Accent / text",
+        "background/muted-foreground": "Background / secondary text",
+        "background/input": "Background / control edge",
+        "background/ring": "Background / focus ring",
+      } as Record<string, string>,
+      pair: "Pair",
+      ratio: "Ratio",
+      pass: "Pass",
+      /** `{floor}` is replaced with the required ratio. */
+      fail: "Fail · needs {floor}:1",
+    },
+
+    motionPanel: {
+      durations: {
+        fast: {
+          name: "Fast",
+          use: "Hover and focus. Anything answering a pointer that is still moving.",
+        },
+        base: {
+          name: "Base",
+          use: "State changes you look at: a card’s glow, a skeleton handing off.",
+        },
+        slow: {
+          name: "Slow",
+          use: "Entrances, where content travels furthest.",
+        },
+      },
+      scale: "Duration scale",
+      easing: "Easing",
+      /** `{ease}` is replaced with the curve. */
+      easingLabel: "The easing curve, {ease}, plotted against a straight line",
+      easingNote:
+        "Steep early, settling late: things move off quickly and arrive gently, so the interface answers at once without lurching. The dashed line is linear, for comparison.",
+      reduced: "Reduced motion",
+      reducedOn: "On — this browser is asking for less motion",
+      reducedOff: "Off — this browser accepts motion",
+      reducedBody:
+        "When this is on, every animation on this site jumps to its finished state: the underline is drawn, the card is visible, and the skeleton hands off without sliding. Content never depends on an animation to become readable.",
+      reducedHero:
+        "The typewriter in the hero matters most. Under reduced motion it never starts, because a timer firing forty times a second is still motion, even when nothing appears to move.",
+    },
+
+    playground: {
+      component: "Component",
+      rendered: "Rendered",
+      renderedLabel: "Rendered component",
+      source: "Source",
+      nothingToConfigure: "Nothing to configure — see the note below.",
+    },
+
+    /**
+     * The component playground's specimens, keyed by recipe id in
+     * app/[lang]/style-guide/_recipes.tsx: what each component is called, what
+     * it's for, the labels on its controls and their options, and the sample
+     * content it's shown with. Option keys are the recipe's own; only the
+     * labels here are shown.
+     */
+    recipes: {
+      button: {
+        name: "Button",
+        description:
+          "Four variants, each pairing a surface with its foreground so every one stays legible in all three themes.",
+        notes: [
+          "The 44px minimum height is enforced in the component, not remembered at call sites.",
+          "asChild renders the child element instead of a <button>, for wrapping a link.",
+        ],
+        controls: { variant: "Variant", size: "Size", state: "State" },
+        sample: "Read case study",
+      },
+      badge: {
+        name: "Badge",
+        description:
+          "A small label. Used for platforms and for pass/fail results.",
+        controls: { variant: "Variant", label: "Label" },
+        samples: ["Web", "iOS", "AA pass"],
+      },
+      card: {
+        name: "Card",
+        description:
+          "A surface that carries text-card-foreground with its background, so anything nested inherits a legible color without restating it.",
+        notes: [
+          "Changing the content option changes the shape of the tree, not a class, which is why the code below grows and shrinks with it.",
+        ],
+        controls: { content: "Content" },
+        options: {
+          content: {
+            title: "Title",
+            description: "With description",
+            body: "With body",
+          } as Record<string, string>,
+        },
+        sample: {
+          title: "VimUI: Vimocity’s design system, built in code",
+          description: "A design system, in code.",
+          body: "50+ components, one shared codebase.",
+        },
+      },
+      "spec-list": {
+        name: "Spec list",
+        description:
+          "Label and value pairs drawn with hairline rules. A <dl>, not a table: these are term and description pairs rather than tabular data, so a screen reader announces “Focus, design systems” instead of “row 1, column 1”.",
+        controls: { rows: "Rows" },
+        options: {
+          rows: { two: "Two", three: "Three", four: "Four" } as Record<
+            string,
+            string
+          >,
+        },
+        samples: [
+          { label: "Focus", value: "Design systems, product design, frontend" },
+          { label: "Stack", value: "TypeScript, React, Next.js, Tailwind" },
+          { label: "Platforms", value: "Web, iOS, Android, Desktop" },
+          { label: "Based", value: "Seattle, Washington" },
+        ],
+      },
+      stat: {
+        name: "Stat",
+        description:
+          "A result, figure first. The figure is the largest thing in the tile and the label says what it counts, so a case study outcome reads as a number rather than a sentence with a number in it.",
+        notes: [
+          "Tiles sit as many across as fit, so two, three, or four results lay out evenly without a rule per count. A caveat goes in the label or the line after the group, never dropped.",
+        ],
+        controls: { count: "Results" },
+        options: {
+          count: { two: "Two", three: "Three", four: "Four" } as Record<
+            string,
+            string
+          >,
+        },
+        samples: [
+          { value: "+65%", label: "Daily 5 completions in challenges" },
+          { value: "−80%", label: "login and account-access support tickets" },
+          { value: "4x+", label: "saves, from launch to the peak month" },
+          { value: "0% → 99%", label: "design token use" },
+        ],
+      },
+      "status-dot": {
+        name: "Status dot",
+        description:
+          "A pulsing marker. Decorative by design: aria-hidden, fully visible at rest, and a no-op under prefers-reduced-motion.",
+        notes: [
+          "Nothing to configure, and that is the design. A variant here would be a color carrying a meaning on its own; the adjacent label carries it instead.",
+        ],
+      },
+      eyebrow: {
+        name: "Eyebrow",
+        description:
+          "The small uppercase label for section headings, card kickers, spec terms, and fieldset legends. The most-repeated text style on the site.",
+        notes: [
+          "Before this existed the same style was written by hand 33 times in 10 spellings: four sizes, three tracking values, three colors. Two of those sizes were arbitrary values resolving to no token at all.",
+          "asChild renders the child element instead of a <p>, because these need to be h2, h3, dt, legend and span depending on what they are labelling.",
+        ],
+        controls: { tone: "Tone", size: "Size" },
+        sample: "Case study",
+      },
+      "control-bar": {
+        name: "Control bar",
+        description:
+          "The site control cluster in the header. One group so the instruments announce once rather than as loose buttons.",
+        notes: [
+          "ControlToggle uses aria-pressed, because it turns a page mode on rather than submitting a value.",
+          "This is the real cluster from the header: the Inspect button above is this component.",
+          "Segmented adds a faint hairline, for toggles that pick one of a few states, like a screenshot’s light and dark. The header’s cluster stays bare.",
+        ],
+        controls: { items: "Contents", inspect: "Inspect", variant: "Variant" },
+        options: {
+          items: {
+            appearance: "Appearance",
+            inspect: "Add inspect",
+            both: "Both toggles",
+          } as Record<string, string>,
+        },
+        sample: {
+          label: "Site controls",
+          appearance: "Appearance",
+          inspect: "Inspect",
+          grid: "Grid",
+        },
+      },
+      figure: {
+        name: "Figure",
+        description:
+          "An image or diagram, framed and captioned. The ratio is required, so the frame holds its space before anything loads and the paragraph under it never jumps.",
+        notes: [
+          "Two widths and no others, inline and breakout, because the layout has two. Every case study screenshot and diagram sits in one.",
+        ],
+        controls: { ratio: "Ratio" },
+        sample: "The caption says what to look at.",
+      },
+      tabs: {
+        name: "Tabs",
+        description:
+          "A segmented control for views of the same thing. Arrow keys move between tabs, and every panel stays in the page, hidden rather than removed, so it still works without JavaScript.",
+        notes: [
+          "The movement challenges case study uses it to switch between the two challenge types.",
+        ],
+        controls: { tabs: "Tabs" },
+        options: {
+          tabs: { two: "Two", three: "Three" } as Record<string, string>,
+        },
+        sample: {
+          label: "Challenge types",
+          items: [
+            {
+              value: "leaderboard",
+              label: "Leaderboard",
+              content: "Teams compete for the top.",
+            },
+            {
+              value: "target",
+              label: "Individual target",
+              content: "Each person plays for a target.",
+            },
+            {
+              value: "group",
+              label: "Group",
+              content: "A crew logs it together.",
+            },
+          ],
+        },
+      },
+      skeleton: {
+        name: "Skeleton",
+        description:
+          "A placeholder in the shape of the content arriving, so a loading page says what it’s waiting for and nothing jumps when it lands.",
+        notes: [
+          "The pulse is opacity only, and it stops under prefers-reduced-motion: a flashing block is worse than a still one for anyone it affects.",
+        ],
+        controls: { lines: "Lines" },
+        options: {
+          lines: { three: "Three", two: "Two", one: "One" } as Record<
+            string,
+            string
+          >,
+        },
+      },
+      monogram: {
+        name: "Monogram",
+        description:
+          "The mark: CS on an ink tile, in the display face. Fixed colors rather than theme tokens, because a logo that changes with the reader’s settings isn’t a logo.",
+        notes: [
+          "The 22% radius is shared with the favicon and the link preview image, so the three read as one object.",
+        ],
+        controls: { size: "Size" },
+      },
+      "print-button": {
+        name: "Print button",
+        description:
+          "Opens the browser’s print dialog, which is also how the experience page saves as a PDF. Printing reads from the same data as the page, so the two can’t disagree.",
+        notes: [
+          "It hides itself in print: a Print button in a printout reads as carelessness on a résumé.",
+        ],
+        sample: "Print / Save as PDF",
+      },
+      "page-title": {
+        name: "Page title",
+        description:
+          "Each page’s one heading, in the display face at a size that scales with the window. Five pages set it, from one definition.",
+        sample: "Movement challenges",
+      },
+      icon: {
+        name: "Icon",
+        description:
+          "The site’s icons, from Heroicons’ outline set: a 24-unit grid, a 1.5 stroke, and round ends, the same thin line as the rest of the site. They draw in the color of the text beside them and are hidden from screen readers, because the control around them carries the name.",
+        notes: [
+          "The paths are copied in, not installed: a new icon is its outline path from Heroicons added to the set.",
+        ],
+        controls: { name: "Name" },
+      },
+      table: {
+        name: "Table",
+        description:
+          "Real table markup for a grid of facts, so rows and columns are announced as rows and columns, at the page’s own type size. It scrolls sideways on a narrow screen rather than breaking its words.",
+        notes: [
+          "Reach for it before drawing a grid in a diagram: VimUI’s reach map was a drawing until it was clear it was a table.",
+        ],
+        controls: { rows: "Rows" },
+        sample: {
+          label: "Platforms and what they share",
+          platform: "Platform",
+          tokens: "Tokens",
+          components: "Components",
+          rows: [
+            ["Web portal", "Source of truth", "VimUI"],
+            ["iOS", "Copied by hand", "Its own"],
+            ["Windows", "Copied by hand", "Its own"],
+          ],
+        },
+      },
+      medal: {
+        name: "Medal",
+        description:
+          "One per case study, so a list of them can be told apart before it’s read. Drawn on the logo’s tile, in the mark’s colors, with one glyph where the monogram has its letters.",
+        notes: [
+          "A case study names its medal in its frontmatter, and no two share one.",
+          "Decorative: the name beside it carries the meaning.",
+        ],
+        controls: { name: "Medal", size: "Size" },
+      },
+      "device-figure": {
+        name: "Device figure",
+        description:
+          "One screen shown twice: in a monitor at desktop width and on a phone, from the same state. Each screen reserves its space from its own ratio, so nothing moves as the images load.",
+        notes: [
+          "The phone overlaps the monitor’s corner on a wide layout and stacks under it on a narrow one, where a small phone would be unreadable.",
+          "Case studies use it for screens behind the access link, with a light and dark switch when both were captured.",
+        ],
+        sample: "The caption says what to look at, at both sizes.",
+      },
+    },
+  },
+};
+
+export type Messages = typeof en;

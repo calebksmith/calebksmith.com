@@ -1,0 +1,79 @@
+---
+title: Design guardrails: Keeping AI-written code on the design system
+role: Design systems, AI tooling
+year: 2025–2026
+stack: [Claude Code Skills, ESLint]
+summary: One design standard, checked by the coding agent, on demand, and before merge, so review stopped waiting on me.
+user: One consistent, accessible product, no matter who built the page.
+business: A team that ships without waiting on a designer for every change.
+connects: [vimui, platform-rebuild]
+area: platform
+medal: rails
+order: 2
+impact: Same output, leaner team
+---
+
+## Problem
+
+The product team was shipping fast with AI, and nothing matched: different
+repositories, different component libraries, patterns invented on the spot.
+Even code built on VimUI used it wrong, with raw colors and type off the scale.
+The only check was me, reviewing everything, which made design the bottleneck.
+Our goal was a standard anyone could build to, whether they wrote the code or
+an agent did.
+
+> **Design challenge:** holding people and agents to one standard without a
+> designer reviewing every change. We stopped reviewing for the standard and
+> started enforcing it in three places, because a rule checked one way has a
+> gap in it. Not every rule is a hard failure: some are warnings, because
+> breaking a guideline on purpose is sometimes the right design.
+
+<Figure
+  caption="The same standard at three points in a change. Errors block the merge; warnings let a deliberate exception through for review."
+>
+  <Enforcement />
+</Figure>
+
+## What I did
+
+- **Loaded the standard into the agent.** Repository rules in CLAUDE.md, the
+  file Claude Code reads first, cover components, tokens, page structure, and
+  accessibility, so new pages start in the right shape.
+- **Built an on-demand design audit.** It’s a skill anyone can run mid-build:
+  it walks the checklist and says what to fix.
+- **Added lint rules that gate every merge.** They run on every push, on
+  generated and hand-written code alike, and check tokens, breakpoints, loading
+  states, and reuse. A local component that gets reused is flagged for the
+  library.
+
+## Outcome
+
+<Stats>
+  <Stat value="Every sprint" label="ships a release, a cadence the old setup couldn’t hold" />
+  <Stat value="Same output" label="from a leaner team, with one design engineer designing and building the frontend" />
+</Stats>
+
+Review no longer takes four steps and two people, and anyone on the team can
+build a page that meets the standard. That’s what made
+[rebuilding the web portal](/work/platform-rebuild) possible at that speed.
+
+**Who did what:** I wrote the agent rules, the design-audit skill, and the lint
+checks, for both the web portal and [VimUI](/work/vimui). The whole team builds
+against them.
+
+## See it on this site
+
+The work versions are private, so this site runs its own, written from scratch:
+[agent rules](https://github.com/calebksmith/calebksmith.com/blob/main/CLAUDE.md), a
+[design-review skill](https://github.com/calebksmith/calebksmith.com/blob/main/.claude/skills/design-review/SKILL.md),
+and [five lint rules](https://github.com/calebksmith/calebksmith.com/blob/main/eslint-rules/ck.mjs)
+that run on every pull request. A failure looks like this:
+
+```
+<section className="bg-accent text-muted-foreground">
+
+ck/paired-surface  "bg-accent" is drawn with "text-muted-foreground",
+                   a pair the contrast gate never measures.
+```
+
+The full list is in the [style guide](/style-guide#rules).

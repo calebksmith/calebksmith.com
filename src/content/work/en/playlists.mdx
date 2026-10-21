@@ -1,0 +1,76 @@
+---
+title: Playlists: Shareable, embeddable video collections
+role: Product design, content distribution
+year: 2025
+stack: [Web portal, Figma]
+summary: Saves grew more than 4x, and the videos reach crews on intranets and break-room screens, account or not.
+user: The right videos on a break-room TV, an intranet, or a meeting screen, with no account needed.
+business: Content that reaches people who never open the app, and a tool sales uses to pitch prospects.
+connects: [platform-rebuild, challenges]
+area: safety-leaders
+medal: playlist
+order: 7
+impact: 4x saves, launch to peak
+---
+
+## Problem
+
+Vimocity had a video library and no way to hand someone part of it. Safety
+leaders run briefings and crew leaders run daily huddles, each with videos
+chosen in advance and played for a group where not everyone has an account.
+Our goal was to get the right videos in front of a crew, account or not.
+
+> **Design challenge:** reaching people without an account, without giving up
+> sign-ups entirely. We chose reach: shared playlists open on an ungated page,
+> so content gets from a crew leader to a crew without a registration step.
+> Sign-in sits on the page rather than in front of it, adding what only makes
+> sense with an account: saving, watch status, and group logging.
+
+<ScreenFigure
+  src="/media/playlists/shared-page.webp"
+  dark="/media/playlists/shared-page-dark.webp"
+  width={1600}
+  height={1000}
+  alt="A shared Cold Weather Safety playlist, opened without signing in: the first video ready to play with Watch and Log in to watch with a group buttons, and the playlist beside it with its three videos and Loop, Save, and Share."
+  caption="A shared link opens straight to the playlist, with nothing to sign in to first. Signing in adds what needs an account, like watching as a group."
+/>
+
+## What I did
+
+- **Added group logging.** One person logs a video or a Daily 5 for everyone
+  who did it with them, so a crew doesn’t need ten phones out to get credit.
+- **Designed embeds for intranets and tailboard systems.** They’re allowlisted
+  by domain and tied to the playlist itself, so one edit updates every embed,
+  from a crew leader’s iPad to the company intranet.
+- **Designed a player for break rooms.** Autoplay, repeat, and full screen let
+  a playlist loop on a break-room TV for people who never open the app.
+
+<GatedFigure
+  src="playlists/playlist-desktop.webp"
+  dark="playlists/playlist-desktop-dark.webp"
+  width={2560}
+  height={1600}
+  alt="The Cold Weather Safety playlist inside the Vimocity web portal: three videos with their length and watch status, a Watch all button, and Edit playlist for the person who made it."
+  phone={{
+    src: "playlists/playlist-phone.webp",
+    dark: "playlists/playlist-phone-dark.webp",
+    width: 750,
+    height: 1624,
+    alt: "The same playlist on a phone: the player, then Watch all, then the three videos in order.",
+  }}
+  caption="The playlist a crew leader builds and plays for the crew, the same page on a laptop at the briefing or a phone at the truck."
+/>
+
+## Outcome
+
+<Stats>
+  <Stat value="4x+" label="saves, from launch to the peak month" />
+  <Stat value="48% → 58%" label="of active web users watching a video, in the three months after launch" />
+</Stats>
+
+April was also a challenge month, so not all of that rise is playlists.
+Sharing by link was barely used; embeds are where sharing happened, with
+screens playing for a room again and again.
+
+**Who did what:** I led design and UI. Engineering built the player, the embeds,
+and group logging.

@@ -1,0 +1,98 @@
+---
+title: V-minder: A desktop app for movement breaks at work
+role: Product design, desktop
+year: 2024–2025
+stack: [Windows, Electron, Figma]
+summary: A Windows app that brought Vimocity to desk-based utility workers, with movement breaks on a schedule they set themselves.
+user: Movement breaks that fit the workday, on a schedule each person sets for themselves.
+business: A third user base: desk-based workers at utility companies, from call centers to office staff.
+connects: [vimui, login]
+area: desk-workers
+medal: bell
+order: 8
+impact: 1.3x as likely to complete the Daily 5
+---
+
+## Problem
+
+Vimocity was built for field workers and the safety leaders who support them,
+but utility companies also employ desk-based workers: call centers and the
+office staff who support the field. They still face stiffness, soreness, and
+potential injuries from sitting all day. Our goal was to give them movement
+suggestions throughout the workday, on a schedule that works for them.
+This was 0→1: a new app, for a group of users Vimocity hadn’t designed for
+before.
+
+<Figure
+  caption="An example day on a schedule the user set: a move every hour, one snoozed for 15 minutes, and one played off schedule."
+>
+  <WorkdaySchedule />
+</Figure>
+
+> **Design challenge:** reaching desk workers on locked-down workstations. Call
+> centers restrict which programs and websites people can use, so we built a
+> Windows desktop app that IT departments could approve, which meant its
+> notifications would show up on those restricted machines. Some workstations
+> are also shared from day to day, so sign-in had to be quick, and V-minder had
+> to keep working for whoever signed in.
+
+<GatedFigure
+  src="v-minder/notification.webp"
+  width={1600}
+  height={1000}
+  alt="A Windows desktop with a V-minder notification in the bottom-right corner, above the taskbar, introducing a move called The Heisman, with a video thumbnail and Watch, Snooze, and Dismiss buttons."
+  caption="A move arrives as a notification on the workstation, with Watch, Snooze, and Dismiss on it."
+/>
+
+## What I did
+
+- **Reused the shared sign-in.** On a shared workstation, each person signs in
+  to their own schedule and preferences, through the same
+  [login](/work/login) as every other platform.
+- **Personalized the content.** Our biggest feedback was that not everyone can
+  stand, so users choose seated moves, standing moves, or both, and can leave
+  out areas with past injuries. Videos on ergonomics and office safety sit
+  alongside the moves.
+
+<GatedFigure
+  src="v-minder/preferences.webp"
+  ratio="1088/768"
+  width={1088}
+  height={768}
+  alt="The V-minder Move Preferences screen: body areas to focus on, from neck to ankle and foot; a choice of sitting and standing, standing only, or sitting only; optional equipment like a massage roller or ball; and a count of 93 videos that match."
+  caption="Move preferences: the body areas to focus on, seated or standing moves, and equipment, with a live count of the videos that match."
+/>
+
+- **Put the schedule in the user’s hands.** They pick the days, hours, and how
+  often (8 moves a day, against a recommended 6 to 8), and can play a move
+  early or swap one they don’t want.
+- **Connected moves to the Daily 5.** Four V-minder moves now earn Daily 5
+  credit, which used to mean switching to the web portal or phone app. That
+  credit counts toward any [challenge](/work/challenges) the user has joined,
+  and V-minder shows it.
+
+<GatedFigure
+  src="v-minder/home.webp"
+  ratio="1088/768"
+  width={1088}
+  height={768}
+  alt="The V-minder home screen: the next scheduled move with Play Now and New Move buttons, Daily 5 progress at three of four moves, and two challenges receiving Daily 5 credit."
+  caption="Home: the next move, Daily 5 progress at three of four moves, and the challenges that credit counts toward."
+/>
+
+## Outcome
+
+<Stats>
+  <Stat
+    value="1.3x"
+    label="as likely to complete the Daily 5 as people who don’t use V-minder"
+  />
+  <Stat value="+30%" label="more likely to complete the Daily 5 more often" />
+  <Stat
+    value="40%"
+    label="of people who open V-minder complete a Daily 5: one move, then at least three more"
+  />
+</Stats>
+
+**Who did what:** I owned the frontend design, the UI, and the UX research,
+including the customer interviews. Engineering built the platform.

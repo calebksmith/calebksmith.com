@@ -1,0 +1,527 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, type MouseEvent } from "react";
+
+import {
+  LOCALES,
+  LOCALE_NAMES,
+  localizePath,
+  splitLocale,
+  type Locale,
+} from "@/lib/i18n/config";
+import type { Messages } from "@/lib/i18n/messages";
+import { INSPECT_ATTRIBUTE } from "@/lib/theme";
+
+import {
+  ControlBar,
+  ControlButton,
+  ControlLink,
+  ControlToggle,
+} from "./control-bar";
+import { Icon } from "./icon";
+import { Medal, type MedalName } from "./medal";
+import { Monogram } from "./monogram";
+import { cn } from "./lib/cn";
+import { useHtmlAttribute } from "./lib/use-html-attribute";
+import { usePopoverOpen } from "./lib/use-popover-open";
+import { ThemeSwitcher, type ThemeSwitcherLabels } from "./theme-switcher";
+
+/**
+ * The site header: a path on the left, instruments on the right.
+ *
+ * The two zones are deliberately different kinds of control and get different
+ * visual grammar, so the bar reads as two things rather than a row of buttons:
+ *
+ *   path         wayfinding — where am I, how do I get back. Plain text links,
+ *                in the site's spec-row idiom (mono, uppercase, tracked).
+ *   instruments  things that change how the page renders or behaves.
+ *                Bordered controls, visually separate.
+ *
+ * The WORK crumb is a menu rather than a link. That is not decoration: there is
+ * no /work index route, and a menu there gives lateral movement between case
+ * studies without going home first — which is the real need a command palette
+ * would have served, minus the discoverability problem of a keyboard shortcut
+ * nobody knows to press.
+ *
+ * Menus use the native Popover API, same as the appearance panel: Escape,
+ * click-outside, and top-layer stacking come from the platform.
+ */
+
+/**
+ * Closes a native popover if it is open.
+ *
+ * The platform closes a popover on Escape and on a click outside it. Following
+ * a link inside it is neither, and the header is not replaced when the page is
+ * — so without this, a menu outlives the page it was opened on.
+ */
+function closePopover(id: string) {
+  const panel = document.getElementById(id);
+  if (panel?.matches(":popover-open")) panel.hidePopover();
+}
+
+/**
+ * For links inside a panel: following one in this tab is done with the panel,
+ * even when the destination is the page you are on. A modified click opens the
+ * page somewhere else, so the panel stays — you may want the next one too.
+ */
+function closeOnFollow(id: string) {
+  return (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+      return;
+    closePopover(id);
+  };
+}
+
+/** A case study as the header needs it: `name` for crumbs, both for the menu. */
+export type WorkItem = {
+  slug: string;
+  name: string;
+  descriptor: string;
+  medal: MedalName;
+};
+
+/** Every visible string, passed in — this is a library component. */
+export type SiteHeaderLabels = Messages["header"];
+
+type Crumb =
+  | { kind: "mark"; label: string; href: string }
+  | { kind: "link"; label: string; href: string }
+  | { kind: "menu"; label: string }
+  | { kind: "current"; label: string };
+
+function buildCrumbs(
+  path: string,
+  work: WorkItem[],
+  labels: SiteHeaderLabels,
+  locale: Locale,
+): Crumb[] {
+  const segments = path.split("/").filter(Boolean);
+  const home = localizePath(locale, "/");
+
+  // The index gets a monogram rather than a trail. There is nowhere to go back
+  // to, and the page states the name at full size directly below — but the
+  // corner was empty, and an empty corner opposite a cluster of instruments
+  // reads as a bar that failed to load rather than as restraint.
+  if (segments.length === 0) {
+    return [{ kind: "mark", label: "CS", href: home }];
+  }
+
+  // The mark stands in for the name on inner pages too — one root for the trail,
+  // the same object in every header, and it buys back the horizontal space that
+  // "CALEB SMITH" was taking from the path on a phone.
+  const crumbs: Crumb[] = [{ kind: "mark", label: "CS", href: home }];
+
+  // On a case study the Work menu is the whole trail after the mark: its
+  // trigger names the study you're on, and opening it lists the rest. A
+  // separate "/ Name" crumb after a menu that already lists every name said
+  // the same thing twice.
+  if (segments[0] === "work" && segments.length === 2) {
+    const current = work.find((item) => item.slug === segments[1]);
+    crumbs.push({ kind: "menu", label: current?.name ?? labels.work });
+    return crumbs;
+  }
+
+  segments.forEach((segment, index) => {
+    const isLast = index === segments.length - 1;
+
+    // /work has no index route, so the crumb opens the case study menu instead
+    // of linking somewhere that would 404.
+    if (segment === "work" && !isLast) {
+      crumbs.push({ kind: "menu", label: labels.work });
+      return;
+    }
+
+    // Case study titles are "Name: What it is" — the name is the crumb, so the
+    // path stays a path instead of a sentence. The Work menu shows both.
+    const name = work.find((item) => item.slug === segment)?.name;
+    const label =
+      labels.segments[segment] ?? name ?? segment.replace(/-/g, " ");
+
+    crumbs.push(
+      isLast
+        ? { kind: "current", label }
+        : {
+            kind: "link",
+            label,
+            href: localizePath(
+              locale,
+              `/${segments.slice(0, index + 1).join("/")}`,
+            ),
+          },
+    );
+  });
+
+  return crumbs;
+}
+
+const CRUMB =
+  "inline-flex min-h-tap items-center text-label uppercase tracking-label whitespace-nowrap";
+
+export function SiteHeader({
+  locale,
+  work,
+  labels,
+  themeLabels,
+}: {
+  locale: Locale;
+  work: WorkItem[];
+  labels: SiteHeaderLabels;
+  themeLabels: ThemeSwitcherLabels;
+}) {
+  // The path under the locale prefix. Crumbs, the current case study, and the
+  // language toggle all work on this, then re-prefix when they build a link.
+  const pathname = usePathname() ?? "/";
+  const { path } = splitLocale(pathname);
+
+  // However the route changed — a link in a menu, the back button, anything
+  // else — the menus belong to the page that was left.
+  useEffect(() => {
+    closePopover("ck-work-menu");
+    closePopover("ck-settings");
+  }, [pathname]);
+  const crumbs = buildCrumbs(path, work, labels, locale);
+
+  // Which case study is open, if any — so the Work menu can mark it.
+  const currentSlug = path.match(/^\/work\/([^/]+)/)?.[1] ?? null;
+
+  return (
+    <header
+      data-slot="site-header"
+      className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-sm"
+    >
+      {/* Height is pinned to --ck-header-height so anything docking beneath the
+          header stays flush with it. The row is tap-sized either way; making it
+          explicit is what lets other components read the value. */}
+      <div className="mx-auto flex h-tap w-full max-w-page items-center gap-4 px-6 sm:px-10">
+        {/* Path — wayfinding. Plain text; scrolls rather than wrapping. */}
+        <nav
+          aria-label={labels.breadcrumb}
+          className="min-w-0 flex-1 overflow-x-auto"
+        >
+          <ol className="flex items-center gap-2">
+            {crumbs.map((crumb, index) => (
+              <li
+                key={`${crumb.label}-${index}`}
+                className="flex items-center gap-2"
+              >
+                {index > 0 ? (
+                  <span aria-hidden="true" className="text-muted-foreground">
+                    /
+                  </span>
+                ) : null}
+
+                {crumb.kind === "mark" ? (
+                  <Link
+                    href={crumb.href}
+                    aria-label={labels.home}
+                    aria-current={path === "/" ? "page" : undefined}
+                    className="inline-flex min-h-tap items-center rounded-sm transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  >
+                    <Monogram />
+                  </Link>
+                ) : crumb.kind === "link" ? (
+                  <Link
+                    href={crumb.href}
+                    className={cn(
+                      CRUMB,
+                      "text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline",
+                    )}
+                  >
+                    {crumb.label}
+                  </Link>
+                ) : crumb.kind === "menu" ? (
+                  <WorkMenu
+                    label={crumb.label}
+                    work={work}
+                    currentSlug={currentSlug}
+                    locale={locale}
+                    labels={labels}
+                  />
+                ) : (
+                  <span
+                    className={cn(CRUMB, "text-foreground")}
+                    aria-current="page"
+                  >
+                    {crumb.label}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        {/* Instruments — one bounded control surface, visually distinct from
+            the path.
+
+            Inspect sits last, hard against the right edge, because that is
+            where its panel docks. The toggle ends up directly above the thing
+            it opens, and the pair reads as one object rather than as a button
+            that happens to have a side effect somewhere else on the page. */}
+        <ControlBar className="shrink-0" label={labels.controls}>
+          <LanguageToggle locale={locale} path={path} label={labels.language} />
+          <AppearanceMenu
+            locale={locale}
+            labels={labels}
+            themeLabels={themeLabels}
+          />
+          <InspectToggle label={labels.inspect} />
+        </ControlBar>
+      </div>
+    </header>
+  );
+}
+
+function WorkMenu({
+  label,
+  work,
+  currentSlug,
+  locale,
+  labels,
+}: {
+  /** "Work", or the case study you're on, which the menu also lists. */
+  label: string;
+  work: WorkItem[];
+  currentSlug: string | null;
+  locale: Locale;
+  labels: SiteHeaderLabels;
+}) {
+  const open = usePopoverOpen("ck-work-menu");
+
+  return (
+    <>
+      <button
+        type="button"
+        popoverTarget="ck-work-menu"
+        data-slot="work-menu-trigger"
+        data-state={open ? "open" : "closed"}
+        // Open state on the trigger, not only on the chevron. A rotating arrow
+        // is a detail you notice after you already know what happened; the
+        // crumb going solid is what tells you which control the panel came from.
+        className={cn(
+          CRUMB,
+          "gap-1 rounded-sm px-1.5 underline-offset-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+          open
+            ? "bg-muted text-foreground"
+            : label !== labels.work
+              ? "text-foreground hover:bg-muted"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground",
+        )}
+      >
+        {/* On a case study the trigger shows its name, so the button says
+            which menu it opens before the name. */}
+        {label !== labels.work ? (
+          <span className="sr-only">{labels.work}: </span>
+        ) : null}
+        <span className="max-w-[55vw] truncate sm:max-w-none">{label}</span>
+        <Chevron open={open} />
+      </button>
+
+      <div
+        id="ck-work-menu"
+        popover="auto"
+        data-slot="work-menu-panel"
+        aria-label={labels.workMenu}
+        className="w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-input bg-card p-2 text-card-foreground shadow-lg"
+      >
+        {/* An arrow on every row, not only the hovered one. Five wrapped titles
+            with nothing between them read as a paragraph; a repeated glyph at a
+            fixed right edge is what makes them a list of destinations. It is
+            aria-hidden — the link already announces itself as a link.
+
+            The page you are on takes the same "current" treatment the rest of
+            the site uses, and loses its arrow: an arrow means "go here", and
+            you are already here. It keeps a dot in the arrow's place so the
+            right edge stays a column rather than developing a gap.
+
+            Padding inside each row and a gap between them, so a two-line
+            title reads as one item: tight within, loose between. */}
+        <ul className="flex flex-col gap-1">
+          {work.map((item) => {
+            const current = item.slug === currentSlug;
+
+            return (
+              <li key={item.slug}>
+                <Link
+                  href={localizePath(locale, `/work/${item.slug}`)}
+                  aria-current={current ? "page" : undefined}
+                  onClick={closeOnFollow("ck-work-menu")}
+                  className={cn(
+                    "group flex min-h-tap items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-pretty transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                    current
+                      ? "bg-muted font-medium text-foreground"
+                      : "hover:bg-muted hover:text-muted-foreground",
+                  )}
+                >
+                  <Medal name={item.medal} size="sm" />
+                  <span className="flex-1">
+                    <span className="block">{item.name}</span>
+                    <span className="sr-only">: </span>
+                    <span className="block text-xs text-muted-foreground">
+                      {item.descriptor}
+                    </span>
+                  </span>
+                  {current ? (
+                    <CurrentDot />
+                  ) : (
+                    <Icon
+                      name="arrow-right"
+                      className="size-3.5 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                    />
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </>
+  );
+}
+
+/**
+ * Turns the inspector on and off.
+ *
+ * The mode lives on <html> rather than in React state, same as theme — the
+ * overlay is a sibling, not a child, and the attribute is what both read.
+ */
+function InspectToggle({ label }: { label: string }) {
+  const active =
+    useHtmlAttribute<"on" | "off">(INSPECT_ATTRIBUTE, "off") === "on";
+
+  return (
+    <ControlToggle
+      icon={<Icon name="crosshair" />}
+      label={label}
+      pressed={active}
+      onClick={() => {
+        const root = document.documentElement;
+        if (active) root.removeAttribute(INSPECT_ATTRIBUTE);
+        else root.setAttribute(INSPECT_ATTRIBUTE, "on");
+      }}
+    />
+  );
+}
+
+function AppearanceMenu({
+  locale,
+  labels,
+  themeLabels,
+}: {
+  locale: Locale;
+  labels: SiteHeaderLabels;
+  themeLabels: ThemeSwitcherLabels;
+}) {
+  const open = usePopoverOpen("ck-settings");
+
+  return (
+    <>
+      <ControlButton
+        popoverTarget="ck-settings"
+        icon={<Icon name="sliders" />}
+        label={labels.appearance}
+        active={open}
+      />
+
+      <div
+        id="ck-settings"
+        popover="auto"
+        data-slot="settings-panel"
+        aria-label={labels.appearanceSettings}
+        className="w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-input bg-card p-5 text-card-foreground shadow-lg"
+      >
+        <h2 className="mb-4 font-display text-sm font-semibold tracking-[-0.01em]">
+          {labels.appearance}
+        </h2>
+
+        <ThemeSwitcher labels={themeLabels} />
+
+        {/* Names where it goes. The old text — "Measured contrast for every
+            pair" — was a claim about the site, and a claim is not a
+            destination: nothing in it said a page was on the other side. */}
+        <p className="mt-5 border-t border-border pt-4 text-xs text-muted-foreground">
+          <Link
+            href={localizePath(locale, "/style-guide#contrast")}
+            onClick={closeOnFollow("ck-settings")}
+            className="underline decoration-input underline-offset-4 transition-colors hover:text-foreground hover:decoration-primary"
+          >
+            {labels.styleGuideLink}
+          </Link>
+        </p>
+      </div>
+    </>
+  );
+}
+
+/**
+ * Switches language, keeping you on the same page.
+ *
+ * A link per other locale rather than a button: changing language is going to
+ * a different URL, and a link is what lets someone open it in a new tab, copy
+ * it, or have it announced as navigation. Each option is written in its own
+ * language and carries `lang` and `hrefLang`, so a screen reader pronounces
+ * "Español" as Spanish and the destination is declared.
+ *
+ * With one locale enabled there is nowhere to switch to, so it renders nothing
+ * rather than a control that cannot do anything.
+ */
+function LanguageToggle({
+  locale,
+  path,
+  label,
+}: {
+  locale: Locale;
+  path: string;
+  label: string;
+}) {
+  const others = LOCALES.filter((code) => code !== locale);
+  if (others.length === 0) return null;
+
+  return (
+    <nav aria-label={label} className="flex items-stretch">
+      {others.map((code) => (
+        <ControlLink
+          key={code}
+          href={localizePath(code, path)}
+          hrefLang={code}
+          lang={code}
+        >
+          <span aria-hidden="true">{code}</span>
+          <span className="sr-only">{LOCALE_NAMES[code]}</span>
+        </ControlLink>
+      ))}
+    </nav>
+  );
+}
+
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 16 16"
+      className={cn("size-3 transition-transform", open && "rotate-180")}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m4 6 4 4 4-4" />
+    </svg>
+  );
+}
+
+/**
+ * Sits where the arrow would be on the page you are already on. Decorative —
+ * `aria-current="page"` is what actually announces it.
+ */
+function CurrentDot() {
+  return (
+    <span
+      aria-hidden="true"
+      className="size-1.5 shrink-0 rounded-full bg-primary"
+    />
+  );
+}
